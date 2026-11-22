@@ -114,6 +114,37 @@ button{cursor:pointer;}
   content:"";position:absolute;right:-40px;top:-60px;width:260px;height:260px;border-radius:50%;
   background:radial-gradient(circle,#FFD9AE 0%,transparent 70%);opacity:.7;
 }
+/* ---- capybara doodles ---- */
+.title-capy{width:26px;height:26px;border-radius:9px;background:#FFF1DE;display:inline-grid;place-items:center;overflow:hidden;flex:0 0 auto;}
+.title-capy .capy{width:22px;height:22px;}
+.capy{display:block;max-width:100%;height:auto;pointer-events:none;user-select:none;}
+.logo{width:48px;height:48px;border-radius:16px;background:linear-gradient(140deg,#FFE9CC,#FFD9B6);display:grid;place-items:center;box-shadow:0 4px 10px rgba(201,151,100,.25);overflow:hidden;}
+.logo .capy{width:38px;height:38px;}
+.capy-bob{animation:capyBob 3.6s ease-in-out infinite;}
+.capy-sway{animation:capySway 4.4s ease-in-out infinite;}
+@keyframes capyBob{0%,100%{transform:translateY(0) rotate(-1deg);}50%{transform:translateY(-3px) rotate(1deg);}}
+@keyframes capySway{0%,100%{transform:translateY(0) rotate(-2deg);}50%{transform:translateY(-5px) rotate(2deg);}}
+.hero-mascot{position:absolute;right:26px;bottom:8px;width:170px;z-index:1;pointer-events:none;}
+.hero-mascot .capy{width:152px;height:152px;}
+.hero-mascot .capy-bubble{
+  position:absolute;right:-4px;top:-24px;background:#fff;border:1px solid #F2DFC6;border-radius:14px;
+  padding:7px 11px;font-size:12px;color:#8A6A45;white-space:nowrap;box-shadow:0 6px 14px rgba(180,140,90,.12);
+}
+.hero-mascot .capy-paw{position:absolute;left:6px;bottom:6px;font-size:16px;opacity:.5;}
+.hero h2, .hero p{position:relative;z-index:2;max-width:calc(100% - 190px);}
+.empty-capy{display:flex;justify-content:center;margin-bottom:6px;}
+.empty-capy .capy{width:140px;height:140px;}
+.res-capy{display:flex;justify-content:center;margin:-6px 0 4px;}
+.res-capy .capy{width:106px;height:106px;}
+.capy-footer{max-width:1120px;margin:8px auto 30px;padding:0 10px;}
+.capy-parade{display:flex;align-items:flex-end;justify-content:center;gap:8px;opacity:.9;}
+.capy-parade .capy{width:74px;height:74px;}
+.capy-footer p{text-align:center;font-size:12px;color:var(--muted);margin:2px 0 0;}
+@media (max-width:760px){
+  .hero-mascot{position:static;width:auto;margin:0 0 10px;display:flex;justify-content:center;}
+  .hero h2,.hero p{max-width:100%;}
+  .hero-mascot .capy-bubble{display:none;}
+}
 .hero h2{font-family:"Baloo 2",system-ui,sans-serif;font-weight:600;font-size:34px;margin:0 0 8px;letter-spacing:.5px;}
 .hero p{margin:0;color:#6E675D;font-size:14.5px;max-width:620px;}
 .hero .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;position:relative;z-index:2;}
@@ -277,7 +308,10 @@ button{cursor:pointer;}
 .cl-row:last-child{border-bottom:0;}
 .cl-top{display:flex;align-items:center;gap:8px;}
 .cl-n{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:#F6EEDF;color:#8A7A63;font-size:11px;display:grid;place-items:center;}
-.cl-q{flex:1 1 auto;min-width:0;width:auto;font-size:13px;padding:6px 9px;}
+.cl-row .cl-q{flex:1 1 auto;min-width:0;width:auto;height:48px;min-height:48px;max-height:120px;font-size:13px;line-height:1.5;padding:6px 9px;resize:vertical;font-family:inherit;}
+.cl-ops{display:flex;flex-direction:column;gap:4px;flex:0 0 auto;}
+.cl-swap{width:24px;height:24px;border-radius:50%;border:1px solid #E7DFCB;background:#FFFDF5;color:#8A7A50;cursor:pointer;font-size:11px;line-height:1;}
+.cl-swap:hover{background:#FFF3DE;}
 .cl-bot{display:flex;gap:8px;margin:6px 0 0 28px;}
 .cl-a{flex:0 1 44%;min-width:0;width:auto;font-size:12.5px;padding:5px 8px;color:#B04A2C;font-weight:600;}
 .cl-w{flex:1 1 auto;min-width:0;width:auto;font-size:12px;padding:5px 8px;}
@@ -326,7 +360,7 @@ button{cursor:pointer;}
 <div class="topbar">
   <div class="topbar-inner">
     <div class="brand">
-      <div class="logo">🌱</div>
+      <div class="logo" id="brandLogo"></div>
       <div>
         <h1>Little Learning Hub</h1>
         <small>KNOW · PRACTISE · GROW</small>
@@ -353,6 +387,7 @@ button{cursor:pointer;}
   <!-- ===== Home ===== -->
   <section class="view active" id="view-home">
     <div class="hero">
+      <div class="hero-mascot" id="heroMascot"></div>
       <h2 id="greeting">Hello, little learner!</h2>
       <p>This hub now holds only your own notes. Whatever you save under a subject can be turned into fill-in-the-blank questions — practise them, find the gaps, and remember them for good.</p>
       <div class="hero-actions">
@@ -497,6 +532,7 @@ button{cursor:pointer;}
   </div>
 </div>
 <div class="toast" id="toast"></div>
+<footer class="capy-footer" id="capyFooter"></footer>
 
 <script>
 /* ==========================================================================
@@ -511,6 +547,123 @@ const SUBJECTS = {
   history: { label:'History', cn:'历史', icon:'🏛', cls:'brown',  cardCls:'hist', lang:'en' },
   science: { label:'Science', cn:'科学', icon:'🔬', cls:'teal',   cardCls:'sci',  lang:'en' }
 };
+/* ==========================================================================
+   Capybara doodles (inline SVG, so the page stays a single self-contained file)
+   ========================================================================== */
+const CAPY = (() => {
+  const B = '#C99764', BD = '#B78551', L = '#EDD3B1', K = '#4B3626', BL = '#F3A88B', ST = '#6B4B36';
+  const svg = (size, vb, inner, cls) =>
+    '<svg class="capy ' + (cls || '') + '" width="' + size + '" height="' + size + '" viewBox="' + vb +
+    '" role="img" aria-label="capybara">' + inner + '</svg>';
+  /* Blocky head + broad flat snout is what makes it read as a capybara rather than a bear. */
+  const head = (x, y, w, h, earAt) => {
+    const cy = y + 3, r = w * 0.075;
+    return '<ellipse cx="' + (x + w * 0.16) + '" cy="' + cy + '" rx="' + r + '" ry="' + (r * 0.95) + '" fill="' + BD + '"/>' +
+      '<ellipse cx="' + (x + w * 0.84) + '" cy="' + cy + '" rx="' + r + '" ry="' + (r * 0.95) + '" fill="' + BD + '"/>' +
+      '<ellipse cx="' + (x + w * 0.16) + '" cy="' + (cy - 0.5) + '" rx="' + (r * 0.45) + '" ry="' + (r * 0.4) + '" fill="#DDB08A"/>' +
+      '<ellipse cx="' + (x + w * 0.84) + '" cy="' + (cy - 0.5) + '" rx="' + (r * 0.45) + '" ry="' + (r * 0.4) + '" fill="#DDB08A"/>' +
+      '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + (h * 0.34) + '" fill="' + B + '"/>';
+  };
+  const snout = (x, y, w, h) =>
+    '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + (h * 0.5) + '" fill="' + L + '"/>' +
+    '<ellipse cx="' + (x + w * 0.32) + '" cy="' + (y + h * 0.38) + '" rx="2.2" ry="2.7" fill="' + ST + '"/>' +
+    '<ellipse cx="' + (x + w * 0.68) + '" cy="' + (y + h * 0.38) + '" rx="2.2" ry="2.7" fill="' + ST + '"/>';
+  const eye = (x, y, r) => '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + K + '"/>' +
+    '<circle cx="' + (x + r * 0.35) + '" cy="' + (y - r * 0.4) + '" r="' + (r * 0.35) + '" fill="#fff"/>';
+  const cheek = (x, y) => '<ellipse cx="' + x + '" cy="' + y + '" rx="5" ry="2.8" fill="' + BL + '" opacity=".45"/>';
+
+  return {
+    /* Just the head — the logo mark. */
+    face(size, cls){
+      return svg(size, '0 0 100 100',
+        head(8, 24, 84, 54) +
+        snout(18, 49, 64, 25) +
+        eye(31, 43, 3.2) + eye(69, 43, 3.2) +
+        '<path d="M46 68 q4 4 8 0" stroke="' + ST + '" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+        cheek(16, 56) + cheek(84, 56),
+        cls);
+    },
+    /* Sitting behind an open book — hero mascot. */
+    read(size, cls){
+      return svg(size, '0 0 150 150',
+        '<ellipse cx="75" cy="141" rx="44" ry="7" fill="#000" opacity=".06"/>' +
+        head(33, 18, 84, 54) +
+        snout(43, 44, 64, 24) +
+        eye(56, 37, 3.2) + eye(94, 37, 3.2) +
+        '<path d="M70 63 q5 4 10 0" stroke="' + ST + '" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+        cheek(42, 51) + cheek(108, 51) +
+        '<rect x="49" y="62" width="52" height="62" rx="24" fill="' + B + '"/>' +
+        '<path d="M58 112 q17 8 34 0" stroke="' + BD + '" stroke-width="1.6" fill="none" opacity=".35"/>' +
+        '<polygon points="75,92 34,104 34,126 75,115" fill="#FFFCF3" stroke="#E0CBAB" stroke-width="1.6"/>' +
+        '<polygon points="75,92 116,104 116,126 75,115" fill="#FFFCF3" stroke="#E0CBAB" stroke-width="1.6"/>' +
+        '<line x1="75" y1="92" x2="75" y2="115" stroke="#E0CBAB" stroke-width="1.6"/>' +
+        '<line x1="42" y1="112" x2="68" y2="105" stroke="#EDDCC2" stroke-width="2"/>' +
+        '<line x1="82" y1="105" x2="108" y2="112" stroke="#EDDCC2" stroke-width="2"/>' +
+        '<ellipse cx="35" cy="119" rx="8" ry="5.4" fill="' + BD + '"/>' +
+        '<ellipse cx="115" cy="119" rx="8" ry="5.4" fill="' + BD + '"/>' +
+        '<path d="M100 14 q10 -9 16 0 q-6 9 -16 0z" fill="#8FBF7F"/>' +
+        '<line x1="102" y1="14" x2="112" y2="13" stroke="#6FA463" stroke-width="1.3"/>',
+        cls);
+    },
+    /* Asleep on a pile of books — empty states. */
+    sleep(size, cls){
+      return svg(size, '0 0 170 145',
+        '<ellipse cx="85" cy="136" rx="58" ry="7" fill="#000" opacity=".06"/>' +
+        '<rect x="34" y="118" width="104" height="12" rx="6" fill="#DCE9D6"/>' +
+        '<rect x="42" y="108" width="88" height="12" rx="6" fill="#FFE3CC"/>' +
+        '<rect x="50" y="98" width="72" height="12" rx="6" fill="#E1E6F7"/>' +
+        '<ellipse cx="80" cy="80" rx="52" ry="27" fill="' + B + '"/>' +
+        head(96, 46, 66, 46) +
+        snout(106, 68, 48, 19) +
+        '<path d="M111 61 q6 -4 12 0" stroke="' + K + '" stroke-width="2.2" fill="none" stroke-linecap="round"/>' +
+        '<path d="M131 61 q6 -4 12 0" stroke="' + K + '" stroke-width="2.2" fill="none" stroke-linecap="round"/>' +
+        cheek(104, 76) + cheek(158, 74) +
+        '<path d="M34 72 q12 -9 22 -2" stroke="' + BD + '" stroke-width="1.8" fill="none" opacity=".5"/>' +
+        '<text x="140" y="38" font-size="17" font-weight="700" fill="#A9BBCB">z</text>' +
+        '<text x="154" y="24" font-size="12" font-weight="700" fill="#C1CEDC">z</text>' +
+        '<text x="38" y="38" font-size="13" font-weight="700" fill="#C1CEDC">z</text>',
+        cls);
+    },
+    /* Arms up with a star — perfect score. */
+    cheer(size, cls){
+      return svg(size, '0 0 140 150',
+        '<ellipse cx="70" cy="142" rx="34" ry="6" fill="#000" opacity=".06"/>' +
+        head(30, 18, 80, 52) +
+        snout(40, 42, 60, 22) +
+        eye(52, 35, 3.1) + eye(88, 35, 3.1) +
+        '<path d="M61 57 q9 10 18 0 q-9 4 -18 0z" fill="' + ST + '"/>' +
+        cheek(40, 49) + cheek(100, 49) +
+        '<rect x="47" y="64" width="46" height="66" rx="21" fill="' + B + '"/>' +
+        '<path d="M47 92 q-14 -16 -13 -28" stroke="' + B + '" stroke-width="9" fill="none" stroke-linecap="round"/>' +
+        '<path d="M93 92 q16 -18 18 -32" stroke="' + B + '" stroke-width="9" fill="none" stroke-linecap="round"/>' +
+        '<circle cx="34" cy="63" r="5.4" fill="' + BD + '"/>' +
+        '<circle cx="111" cy="59" r="5.4" fill="' + BD + '"/>' +
+        '<polygon points="118,18 122,29 134,29 124,36 128,48 118,41 108,48 112,36 102,29 114,29" fill="#F5C451" stroke="#E0A93A" stroke-width="1.2" stroke-linejoin="round"/>' +
+        '<circle cx="22" cy="28" r="3" fill="#F0B9A0"/><circle cx="30" cy="46" r="2.4" fill="#A9C9E8"/>' +
+        '<circle cx="102" cy="14" r="2.6" fill="#A9C9E8"/><circle cx="130" cy="60" r="2.8" fill="#F0B9A0"/>',
+        cls);
+    },
+    /* Sitting with a pencil and a “?” — needs another go. */
+    think(size, cls){
+      return svg(size, '0 0 140 150',
+        '<ellipse cx="70" cy="142" rx="34" ry="6" fill="#000" opacity=".06"/>' +
+        head(30, 20, 80, 52) +
+        snout(40, 44, 60, 22) +
+        eye(52, 37, 3.1) + eye(88, 37, 3.1) +
+        '<path d="M65 59 q5 4 10 0" stroke="' + ST + '" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+        cheek(40, 51) + cheek(100, 51) +
+        '<rect x="47" y="66" width="46" height="64" rx="21" fill="' + B + '"/>' +
+        '<path d="M47 92 q-13 -14 -12 -26" stroke="' + B + '" stroke-width="9" fill="none" stroke-linecap="round"/>' +
+        '<circle cx="35" cy="63" r="5.4" fill="' + BD + '"/>' +
+        '<circle cx="106" cy="26" r="4" fill="#FFFDF8" stroke="#E8D6BB"/>' +
+        '<circle cx="114" cy="16" r="6.5" fill="#FFFDF8" stroke="#E8D6BB"/>' +
+        '<ellipse cx="124" cy="4" rx="15" ry="12" fill="#FFFDF8" stroke="#E8D6BB"/>' +
+        '<text x="117" y="10" font-size="15" font-weight="800" fill="#D9A46A">?</text>',
+        cls);
+    }
+  };
+})();
+
 const SUBJECT_KEYS = Object.keys(SUBJECTS);
 
 /* The one note that ships with the page: the 《星际动物园》 worksheet, with answers. */
@@ -863,7 +1016,7 @@ function renderSubject(key){
   list.sort((a,b) => (b.date || '').localeCompare(a.date || '') || (b.createdAt || 0) - (a.createdAt || 0));
 
   if(list.length === 0){
-    grid.innerHTML = '<div class="empty" style="grid-column:1/-1;"><span class="big">' + s.icon + '</span>' +
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1;"><div class="empty-capy">' + CAPY.sleep(118) + '</div>' +
       '<p>' + (STORE.notes.some(n => n.subject === key)
         ? (zh ? '没有符合搜索条件的笔记。' : 'Nothing matches this search.')
         : (zh ? '「' + s.cn + '」还没有笔记，先添加第一条吧，练习题会由它生成。' : 'No notes under ' + s.label + ' yet. Add the first one — practice questions are generated from it.')) + '</p>' +
@@ -961,6 +1114,44 @@ function viewNote(n){
 /* ==========================================================================
    Note form
    ========================================================================== */
+/* Put the blank on a different word of the same sentence. */
+function cycleBlank(q, ansStr, terms){
+  const first = String(ansStr || '').split(/[\/／|｜,，、]+/).map(x => x.trim()).filter(Boolean)[0];
+  if(!first) return null;
+  const sent = String(q).indexOf('＿＿') >= 0 ? String(q).split('＿＿').join(first) : String(q);
+  const cands = [];
+  const seen = new Set();
+  const push = (w, at) => {
+    if(w.length < 2 || seen.has(w)) return;
+    if(STOP_CN.includes(w) || STOP_EN.includes(w.toLowerCase())) return;
+    seen.add(w); cands.push({ w, at });
+  };
+  (sent.match(/[A-Za-z][A-Za-z'\-]{3,}/g) || []).forEach(w => push(w, sent.indexOf(w)));
+  /* Chinese: only blank words the note itself lists as key terms, so the gap never lands mid-word. */
+  String(terms || '').split(/[,，、\s]+/).filter(t => t.length >= 2).forEach(t => {
+    let at = sent.indexOf(t);
+    while(at >= 0){ push(t, at); at = sent.indexOf(t, at + 1); }
+  });
+  /* No key terms given: split the Chinese sentence at function words and cycle among those chunks. */
+  if(cands.filter(c => /[\u4e00-\u9fa5]/.test(c.w)).length < 2 && /[\u4e00-\u9fa5]/.test(sent)){
+    const parts = sent.split(/[的了和与在是把被对从为而且就都也还又很更最不没要会能，。、；：？！\s]/).map(x => x.trim()).filter(Boolean);
+    let cursor = 0;
+    parts.forEach(p => {
+      if(p.length >= 2 && p.length <= 10){
+        const at = sent.indexOf(p, cursor);
+        if(at >= 0){ push(p, at); cursor = at + p.length; }
+      }
+    });
+  }
+  cands.sort((a,b) => a.at - b.at);
+  if(cands.length < 2) return null;
+  const curPos = cands.findIndex(c => c.w.toLowerCase() === first.toLowerCase());
+  const next = cands[(curPos + 1 + cands.length) % cands.length];
+  if(!next || next.w === first) return null;
+  const q2 = sent.slice(0, next.at) + '＿＿' + sent.slice(next.at + next.w.length);
+  return { q: q2, a: next.w, sentence: sent };
+}
+
 function openNoteForm(item, subjectKey){
   const edit = !!item;
   const n = item || { subject: subjectKey || 'chinese', title:'', source:'', date: todayStr(), tags:'', keyTerms:'', content:'' };
@@ -991,7 +1182,7 @@ function openNoteForm(item, subjectKey){
         '<button type="button" class="btn sm ghost" id="clReGen">🔄 ' + (zh ? '按正文重新生成' : 'Rebuild from the notes') + '</button>' +
       '</div>' +
       '<div class="cl-list" id="clozeList"></div>' +
-      '<div class="help">' + (zh ? '题干里用“＿＿”标出空位；一道题可以写多个答案，用 / 分隔。全部留空则继续自动从正文挖空。' : 'Mark the gap with “＿＿”; separate alternative answers with /. Clear them all to let the page blank out words automatically again.') + '</div>' +
+      '<div class="help">' + (zh ? '题干里用“＿＿”标出空位，一句话可以放 2–3 个空；答案每个空一组、用 ; 分隔，同一空的不同写法用 / 分隔。全部留空则回到自动挖空。' : 'Mark each gap with “＿＿” — one sentence can hold 2–3 blanks. Give one answer group per blank separated by ;, and alternatives inside a group with /. Clear them all to go back to automatic blanking.') + '</div>' +
     '</div>';
 
   /* Editable list of practice questions: prefilled from saved ones, or from the notes themselves. */
@@ -1014,11 +1205,14 @@ function openNoteForm(item, subjectKey){
     list.innerHTML = draft.length ? draft.map((r, i) =>
       '<div class="cl-row" data-i="' + i + '">' +
         '<div class="cl-top"><span class="cl-n">' + (i+1) + '</span>' +
-          '<input class="cl-q" value="' + esc(r.q) + '" placeholder="' + (zh ? '题干，用 ＿＿ 表示空位' : 'question, use ＿＿ for the blank') + '">' +
-          '<button type="button" class="cl-del" data-del="' + i + '" title="' + (zh ? '删除这题' : 'Delete') + '">✕</button>' +
+          '<textarea class="cl-q" rows="2" placeholder="' + (zh ? '题干，用 ＿＿ 表示空位' : 'question, use ＿＿ for the blank') + '">' + esc(r.q) + '</textarea>' +
+          '<div class="cl-ops">' +
+            ((String(r.q).split('＿＿').length - 1) === 1 ? '<button type="button" class="cl-swap" data-swap="' + i + '" title="' + (zh ? '把空位换到句子里另一个词上' : 'Move the blank to another word') + '">⇄</button>' : '') +
+            '<button type="button" class="cl-del" data-del="' + i + '" title="' + (zh ? '删除这题' : 'Delete') + '">✕</button>' +
+          '</div>' +
         '</div>' +
         '<div class="cl-bot">' +
-          '<input class="cl-a" value="' + esc(r.a) + '" placeholder="' + (zh ? '答案（多个写法用 / 分隔）' : 'answer (alternatives with /)') + '">' +
+          '<input class="cl-a" value="' + esc(r.a) + '" placeholder="' + (zh ? '答案：每个空一组，用 ; 分隔；同一空多个写法用 / 分隔' : 'answers: one per blank separated by ;, alternatives by /') + '">' +
           '<input class="cl-w" value="' + esc(r.why) + '" placeholder="' + (zh ? '讲解（选填）' : 'explanation (optional)') + '">' +
         '</div>' +
       '</div>').join('') :
@@ -1027,6 +1221,18 @@ function openNoteForm(item, subjectKey){
     if(cnt) cnt.textContent = draft.length;
     list.querySelectorAll('.cl-del').forEach(btn => {
       btn.onclick = () => { draft = readRows(); draft.splice(+btn.dataset.del, 1); hadManual = true; renderCloze(); };
+    });
+    list.querySelectorAll('.cl-swap').forEach(btn => {
+      btn.onclick = () => {
+        draft = readRows();
+        const i = +btn.dataset.swap;
+        const swapped = cycleBlank(draft[i].q, draft[i].a, document.getElementById('nKeys') ? document.getElementById('nKeys').value : '');
+        if(!swapped){ toast(zh ? '这句里没有别的词可以挖空了' : 'No other word in this sentence can be blanked'); return; }
+        draft[i].q = swapped.q;
+        draft[i].a = swapped.a;
+        if(!draft[i].why || /^(原句：|Original:)/.test(draft[i].why)) draft[i].why = (zh ? '原句：' : 'Original: ') + swapped.sentence;
+        hadManual = true; renderCloze();
+      };
     });
   };
   /* The modal body already exists now, so build the editor and wire its buttons. */
@@ -1074,14 +1280,22 @@ function openNoteForm(item, subjectKey){
       const rows = readRows().filter(r => (r.q || '').trim());
       const cloze = [];
       for(const r of rows){
-        const a = r.a.split(/[\/／|｜,，、]+/).map(x => x.trim()).filter(Boolean);
-        if(!a.length) continue;
+        const idx = rows.indexOf(r) + 1;
+        const groups = r.a.split(/[;；]+/).map(g => g.split(/[\/／|｜、]+/).map(x => x.trim()).filter(Boolean)).filter(g => g.length);
+        if(!groups.length) continue;
         let q = r.q.trim();
-        if(q.indexOf('＿＿') < 0){
-          const hit = a.find(x => q.toLowerCase().indexOf(x.toLowerCase()) >= 0);
-          if(hit){ q = q.replace(hit, '＿＿'); } else { toast(zh ? '第 ' + (rows.indexOf(r)+1) + ' 题的题干里没有“＿＿”，也没有出现答案词' : 'Question ' + (rows.indexOf(r)+1) + ' has no “＿＿” gap and no answer word'); return false; }
+        let blanks = q.split('＿＿').length - 1;
+        if(blanks === 0){
+          const hit = groups[0].find(x => q.toLowerCase().indexOf(x.toLowerCase()) >= 0);
+          if(!hit){ toast(zh ? '第 ' + idx + ' 题的题干里没有“＿＿”，也没有出现答案词' : 'Question ' + idx + ' has no “＿＿” gap and no answer word'); return false; }
+          q = q.replace(hit, '＿＿'); blanks = 1;
         }
-        cloze.push({ q, a: a.length > 1 ? a : [a[0]], why: r.why.trim() });
+        if(groups.length !== blanks){
+          toast(zh ? '第 ' + idx + ' 题有 ' + blanks + ' 个空，但写了 ' + groups.length + ' 组答案；每个空一组，用 ; 分隔'
+            : 'Question ' + idx + ' has ' + blanks + ' blank(s) but ' + groups.length + ' answer group(s) — separate each blank with ;');
+          return false;
+        }
+        cloze.push({ q, a: blanks === 1 ? groups[0] : groups, why: r.why.trim() });
       }
       if(cloze.length) data.cloze = cloze;
       if(edit){
@@ -1094,7 +1308,7 @@ function openNoteForm(item, subjectKey){
       save();
       renderSubject(data.subject);
       renderHome();
-      toast(edit ? '修改已保存 ✓' : '笔记已保存 ✓');
+      toast(edit ? (zh ? '修改已保存 ✓' : 'Changes saved ✓') : (zh ? '笔记已保存 ✓' : 'Note saved ✓'));
     }
   });
   mountCloze();
@@ -1104,7 +1318,14 @@ function openNoteForm(item, subjectKey){
    Fill-in-the-blank generation
    ========================================================================== */
 const STOP_CN = ['我们','你们','他们','自己','这个','那个','什么','因为','所以','但是','可以','已经','就是','不是','一个','没有','这样','那样','起来','出来','时候','地方','东西','人们','一种','进行','表示','说明','体现','成为'];
-const STOP_EN = ['the','and','that','this','with','from','have','were','they','there','which','about','when','what','their','would','could','should','been','because','these','those','into','than','then','will','shall'];
+const STOP_EN = ['the','and','that','this','with','from','have','were','they','there','which','about','when','what',
+  'their','would','could','should','been','because','these','those','into','than','then','will','shall','was','are',
+  'has','had','is','be','been','being','do','did','does','done','use','used','uses','help','helps','make','makes','made',
+  'take','takes','took','get','gets','got','give','gives','gave','also','more','most','such','only','other','some',
+  'its','it','he','she','we','you','they','his','her','him','them','our','your','my','out','up','down','now','very',
+  'much','many','one','two','first','last','new','old','like','just','even','still','yet','so','too','all','any',
+  'each','every','no','not','off','on','at','by','for','of','to','in','as','or','if','but','can','may','must',
+  'after','before','during','while','where','who','whom','whose','why','how','both','between','over','under','again'];
 
 function splitSentences(text){
   return String(text || '')
@@ -1168,6 +1389,22 @@ function norm(s){
 /* ==========================================================================
    Practice
    ========================================================================== */
+/* One question may hold 1–3 blanks. Answers come back as [ [alts for blank1], [alts for blank2], … ]. */
+function answersPerBlank(it, n){
+  const raw = Array.isArray(it.a) ? it.a : [it.a];
+  if(n <= 1){
+    const alts = raw.reduce((acc, x) => acc.concat(Array.isArray(x) ? x : [x]), []).map(x => String(x == null ? '' : x)).filter(Boolean);
+    return [alts.length ? alts : ['']];
+  }
+  const out = [];
+  for(let i = 0; i < n; i++){
+    const e = raw[i];
+    if(e == null){ out.push(['']); continue; }
+    out.push((Array.isArray(e) ? e : [e]).map(x => String(x == null ? '' : x)).filter(Boolean) || ['']);
+  }
+  return out;
+}
+
 function startPractice(notes, label, lang){
   const zh = lang === 'zh';
   let items = [];
@@ -1186,14 +1423,21 @@ function startPractice(notes, label, lang){
       : 'Type the missing words from memory. Stuck? Tap a blank to see its answer, or use “Show all answers”. Blanks you peeked at are not added to the mistake book.') + '</div>' +
     '<div>' + pool.map((it, i) => {
       const parts = String(it.q).split('＿＿');
-      const longest = it.a.reduce((m, x) => Math.max(m, String(x).length), 1);
-      const isZh = /[\u4e00-\u9fa5]/.test(String(it.a[0]));
-      const w = Math.min(320, Math.max(88, Math.round(longest * (isZh ? 19 : 9) + 28)));
+      const n = Math.max(1, parts.length - 1);
+      const per = answersPerBlank(it, n);
+      let inner = esc(parts[0]);
+      for(let b = 0; b < n; b++){
+        const alts = per[b] || [''];
+        const longest = alts.reduce((m, x) => Math.max(m, String(x).length), 1);
+        const isZh = /[\u4e00-\u9fa5]/.test(String(alts[0]));
+        const w = Math.min(300, Math.max(70, Math.round(longest * (isZh ? 19 : 9) + 26)));
+        inner += '<input class="cq-in" id="cz-' + i + '-' + b + '" style="width:' + w + 'px" autocomplete="off" autocapitalize="off" spellcheck="false">' +
+          esc(parts[b + 1] || '');
+      }
       return '<div class="cq" id="cq-' + i + '">' +
-        '<div class="cq-head"><span class="idx">' + (i+1) + '</span><span>' + esc(it.src || label) + '</span></div>' +
-        '<div class="cq-text">' + esc(parts[0]) +
-          '<input class="cq-in" id="cz-' + i + '" style="width:' + w + 'px" autocomplete="off" autocapitalize="off" spellcheck="false">' +
-          esc(parts[1] || '') + '</div>' +
+        '<div class="cq-head"><span class="idx">' + (i+1) + '</span><span>' + esc(it.src || label) +
+          (n > 1 ? ' · ' + n + (zh ? ' 个空' : ' blanks') : '') + '</span></div>' +
+        '<div class="cq-text">' + inner + '</div>' +
         '<div class="cq-fb" id="fb-' + i + '"></div>' +
       '</div>';
     }).join('') + '</div>' +
@@ -1206,6 +1450,7 @@ function startPractice(notes, label, lang){
   openModal({ title: (zh ? '填空练习 · ' : 'Fill in the blanks · ') + label, body, okText: (zh ? '关闭' : 'Close'), closeText: (zh ? '关闭' : 'Close') });
 
   /* Tap a blank to peek at its answer (tap again to hide it). */
+  const nBlanks = i => Math.max(1, String(pool[i].q).split('＿＿').length - 1);
   const showAnswer = (i, force) => {
     const box = document.getElementById('cq-' + i);
     const fb = document.getElementById('fb-' + i);
@@ -1220,27 +1465,36 @@ function startPractice(notes, label, lang){
       return;
     }
     const it = pool[i];
+    const n = nBlanks(i);
+    const per = answersPerBlank(it, n);
     revealed.add(i);
     box.classList.add('revealed');
     const mk = document.getElementById('pk-' + i);
     if(mk) mk.classList.add('on');
-    fb.innerHTML = '<span class="peek">' + (zh ? '答案：' : 'Answer: ') + '<b>' + esc(it.a[0]) + '</b>' +
-      (it.a.length > 1 ? ' <i>/ ' + esc(it.a.slice(1).join(' / ')) + '</i>' : '') + '</span>' +
+    const linesOut = per.map((alts, b) =>
+      (n > 1 ? '<span class="pk-n">' + (b + 1) + '</span>' : '') + '<b>' + esc(alts[0] || '') + '</b>' +
+      (alts.length > 1 ? ' <i>/ ' + esc(alts.slice(1).join(' / ')) + '</i>' : '')).join(n > 1 ? '<br>' : '');
+    fb.innerHTML = '<span class="peek">' + (zh ? '答案：' : 'Answer: ') + linesOut + '</span>' +
       (it.why ? '<div class="peek-why">' + esc(it.why) + '</div>' : '');
     fb.classList.add('show');
   };
   pool.forEach((it, i) => {
-    const inp = document.getElementById('cz-' + i);
-    const tail = inp.nextSibling;
+    const n = nBlanks(i);
+    const last = document.getElementById('cz-' + i + '-' + (n - 1));
+    const tail = last.nextSibling;
     const mark = document.createElement('button');
     mark.type = 'button';
     mark.id = 'pk-' + i;
     mark.className = 'cq-peek';
     mark.title = zh ? '看答案' : 'Show the answer';
     mark.textContent = '？';
-    inp.parentNode.insertBefore(mark, tail);
+    last.parentNode.insertBefore(mark, tail);
     mark.onclick = e => { e.preventDefault(); showAnswer(i); };
-    inp.addEventListener('focus', () => { if(!revealed.has(i) && !inp.value.trim()) showAnswer(i); });
+    for(let b = 0; b < n; b++){
+      const inp = document.getElementById('cz-' + i + '-' + b);
+      if(!inp) continue;
+      inp.addEventListener('focus', () => { if(!revealed.has(i) && !inp.value.trim()) showAnswer(i); });
+    }
   });
 
   document.getElementById('czRevealAll').onclick = () => {
@@ -1252,31 +1506,42 @@ function startPractice(notes, label, lang){
     const wrongs = [];
     let peeks = 0;
     pool.forEach((it, i) => {
-      const inp = document.getElementById('cz-' + i);
       const box = document.getElementById('cq-' + i);
       const fb = document.getElementById('fb-' + i);
-      const val = inp.value.trim();
-      const ok = !!val && it.a.some(ans => norm(ans) === norm(val));
-      if(revealed.has(i) && !ok) peeks++;
+      const n = nBlanks(i);
+      const per = answersPerBlank(it, n);
+      const vals = [];
+      let okAll = true;
+      for(let b = 0; b < n; b++){
+        const inp = document.getElementById('cz-' + i + '-' + b);
+        const val = inp ? inp.value.trim() : '';
+        vals.push(val);
+        const ok = !!val && per[b].some(ans => norm(ans) === norm(val));
+        if(!ok) okAll = false;
+      }
+      if(revealed.has(i) && !okAll) peeks++;
       box.classList.remove('right','wrong');
       fb.classList.remove('show');
-      if(ok){
+      if(okAll){
         right++;
         box.classList.add('right');
         fb.innerHTML = '<b>' + (zh ? '✓ 正确' : '✓ Correct') + '</b>';
         fb.classList.add('show');
       }else{
         box.classList.add('wrong');
-        fb.innerHTML = (zh ? '答案：' : 'Answer: ') + '<b>' + esc(it.a[0]) + '</b>' + (it.why ? '\n' + esc(it.why) : '');
+        fb.innerHTML = '<b>' + (zh ? '答案：' : 'Answer: ') + '</b>' +
+          per.map((alts, b) => (n > 1 ? (b + 1) + '. ' : '') + esc(alts[0] || '')).join(n > 1 ? '\n' : '') +
+          (it.why ? '\n' + esc(it.why) : '');
         fb.classList.add('show');
-        if(!revealed.has(i)) wrongs.push({ it, val });
+        if(!revealed.has(i)) wrongs.push({ it, val: vals.join(' | '), answerText: per.map(alts => alts[0] || '').join(' | ') });
       }
     });
 
     const rate = Math.round(right / pool.length * 100);
     const rb = document.getElementById('czResult');
     rb.classList.add('show');
-    rb.innerHTML = '<h4>' + (zh
+    rb.innerHTML = '<div class="res-capy">' + (rate === 100 ? CAPY.cheer(94) : CAPY.think(94)) + '</div>' +
+      '<h4>' + (zh
         ? '答对 ' + right + ' / ' + pool.length + '（' + rate + '%）'
         : right + ' / ' + pool.length + ' correct (' + rate + '%)') + '</h4>' +
       '<p>' + (zh
@@ -1291,7 +1556,7 @@ function startPractice(notes, label, lang){
 
     if(wrongs.length){
       wrongs.forEach(w => {
-        const key = w.it.q + '|' + w.it.a[0];
+        const key = w.it.q + '|' + JSON.stringify(w.it.a);
         if(savedSet.has(key)) return;
         savedSet.add(key);
         const dup = STORE.mistakes.some(m => m.question === w.it.q && m.status !== 'mastered');
@@ -1302,7 +1567,7 @@ function startPractice(notes, label, lang){
           source: (zh ? '填空练习 · ' : 'Cloze practice · ') + (w.it.src || label),
           question: w.it.q,
           myAnswer: w.val || (zh ? '（未填）' : '(left blank)'),
-          answer: w.it.a[0],
+          answer: w.answerText || (Array.isArray(w.it.a) ? String(w.it.a[0]) : String(w.it.a)),
           analysis: (w.it.why || '') + (w.it.a.length > 1 ? (zh ? '\n也可接受：' : '\nOther accepted answers: ') + w.it.a.slice(1).join(' / ') : ''),
           tags: zh ? '填空 自动收录' : 'fill in the blanks auto-saved',
           status: 'new',
@@ -1350,7 +1615,7 @@ function renderMistakes(){
 
   const box = document.getElementById('mistakeList');
   if(list.length === 0){
-    box.innerHTML = '<div class="empty" style="grid-column:1/-1;"><span class="big">📕</span>' +
+    box.innerHTML = '<div class="empty" style="grid-column:1/-1;"><div class="empty-capy">' + CAPY.think(108) + '</div>' +
       '<p>' + (total ? 'Nothing matches these filters.' : 'The mistake book is empty. Wrong blanks from your practice will appear here.') + '</p></div>';
     return;
   }
@@ -1531,6 +1796,22 @@ document.getElementById('fileImport').onchange = e => { doImport(e.target.files[
 /* ==========================================================================
    Init
    ========================================================================== */
+function mountCapy(){
+  const logo = document.getElementById('brandLogo');
+  if(logo) logo.innerHTML = CAPY.face(38, 'capy-bob');
+  const foot = document.getElementById('capyFooter');
+  if(foot) foot.innerHTML = '<div class="capy-parade">' + CAPY.sleep(74, 'capy-bob') + CAPY.read(74, 'capy-sway') +
+    CAPY.cheer(74, 'capy-bob') + '</div><p>Practise a little every day — the capybaras are cheering you on.</p>';
+  /* a little mascot beside each section heading */
+  SUBJECT_KEYS.concat(['mistakes']).forEach(k => {
+    const t = document.querySelector('#view-' + k + ' .section-title');
+    if(t && !t.querySelector('.title-capy')) t.insertAdjacentHTML('beforeend', '<span class="title-capy">' + CAPY.face(26) + '</span>');
+  });
+  const hero = document.getElementById('heroMascot');
+  if(hero) hero.innerHTML = '<div class="capy-bubble">' + 'Fill the gaps, little one!' + '</div>' + CAPY.read(152, 'capy-sway') +
+    '<div class="capy-paw">🐾</div>';
+}
+mountCapy();
 SUBJECT_KEYS.forEach(renderSubject);
 renderHome();
 renderMistakes();
