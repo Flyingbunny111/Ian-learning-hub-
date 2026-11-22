@@ -1,0 +1,1836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Little Learning Hub · Knowledge & Practice</title>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Nunito:wght@300;400;600;700;900&family=Baloo+2:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+/* ===== Base ===== */
+:root{
+  --bg:#FDF8F1; --ink:#2B2A28; --muted:#7A736A; --line:#EFE4D6; --card:#FFFFFF;
+  --la:#DE6A48; --la-soft:#FDEDE6;
+  --math:#3579C0; --math-soft:#E8F0FA;
+  --en:#7A5BC7; --en-soft:#F0EBFB;
+  --hist:#9C6B33; --hist-soft:#F7EDDF;
+  --sci:#2E9E8F; --sci-soft:#E4F4F1;
+  --ok:#2E9E68; --ok-soft:#E6F5EE;
+  --warn:#D99A2B; --warn-soft:#FCF2DE;
+  --radius:18px; --shadow:0 6px 20px rgba(90,70,45,.08);
+  --shadow-lg:0 14px 40px rgba(90,70,45,.14);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:"Nunito","Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #FFEEDD 0%, transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, #EAF1FD 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink); line-height:1.65; -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+a{color:inherit;}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit;}
+button{cursor:pointer;}
+::selection{background:#FFE1B8;}
+
+/* ===== Top bar ===== */
+.topbar{
+  position:sticky; top:0; z-index:30;
+  backdrop-filter:saturate(140%) blur(12px);
+  background:rgba(253,248,241,.86);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{
+  max-width:1240px; margin:0 auto; padding:12px 22px;
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+}
+.brand{display:flex; align-items:center; gap:10px; margin-right:auto;}
+.logo{
+  width:42px;height:42px;border-radius:14px;display:grid;place-items:center;
+  background:linear-gradient(135deg,#FFD8A8,#FFC078);
+  font-size:22px; box-shadow:0 6px 14px rgba(226,150,60,.28);
+}
+.brand h1{
+  font-family:"Baloo 2","Nunito",system-ui,sans-serif;
+  font-size:20px; margin:0; letter-spacing:.6px; font-weight:600;
+}
+.brand small{display:block;font-size:11px;color:var(--muted);letter-spacing:2px;margin-top:-2px;}
+.nav{display:flex;gap:4px;flex-wrap:wrap;background:#fff;padding:5px;border-radius:999px;border:1px solid var(--line);box-shadow:var(--shadow);}
+.nav button{
+  border:0;background:transparent;padding:7px 12px;border-radius:999px;
+  font-size:13.5px;color:#5D574F;transition:.18s;display:flex;align-items:center;gap:5px;white-space:nowrap;
+}
+.nav button:hover{background:#FAF3E9;color:var(--ink);}
+.nav button.active{background:linear-gradient(135deg,#FFB870,#FF9E54);color:#fff;box-shadow:0 4px 12px rgba(230,145,60,.35);font-weight:600;}
+.tools{display:flex;gap:8px;}
+.icon-btn{
+  width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:#fff;
+  display:grid;place-items:center;font-size:16px;transition:.18s;
+}
+.icon-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+
+/* ===== Layout ===== */
+.wrap{max-width:1180px;margin:0 auto;padding:26px 22px 80px;}
+.view{display:none;animation:fadeUp .35s ease;}
+.view.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+.section-title{display:flex;align-items:center;gap:10px;margin:0 0 4px;font-size:22px;letter-spacing:.3px;font-weight:700;}
+.section-sub{color:var(--muted);font-size:13.5px;margin:0 0 20px;}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 11px;border-radius:999px;font-size:12.5px;background:#fff;border:1px solid var(--line);}
+.chip.green{background:var(--ok-soft);border-color:#BFE6D3;color:#1F7A4F;}
+.chip.orange{background:var(--warn-soft);border-color:#F0DDB8;color:#9A6C11;}
+.chip.blue{background:var(--math-soft);border-color:#CFE0F4;color:#2A5E96;}
+.chip.red{background:var(--la-soft);border-color:#F7D5C8;color:#B04A2C;}
+.chip.purple{background:var(--en-soft);border-color:#E0D7F7;color:#5B40A4;}
+.chip.brown{background:var(--hist-soft);border-color:#E6D2B4;color:#85571F;}
+.chip.teal{background:var(--sci-soft);border-color:#BFE3DC;color:#1B7A6D;}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);}
+.pad{padding:22px;}
+
+.btn{
+  border:1px solid transparent;border-radius:12px;padding:9px 16px;font-size:14px;
+  transition:.18s;background:#fff;border-color:var(--line);color:#5D574F;
+  display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow);}
+.btn:active{transform:translateY(0);}
+.btn.primary{background:linear-gradient(135deg,#FFB870,#FF9E54);color:#fff;border:0;font-weight:600;box-shadow:0 6px 14px rgba(230,145,60,.28);}
+.btn.dark{background:#33302C;color:#fff;border:0;}
+.btn.ghost{background:#FAF6EF;}
+.btn.green{background:var(--ok);color:#fff;border:0;}
+.btn.sm{padding:5px 11px;font-size:12.5px;border-radius:9px;}
+
+/* ===== Home ===== */
+.hero{
+  position:relative;overflow:hidden;border-radius:26px;padding:34px 34px 30px;
+  background:linear-gradient(120deg,#FFF3E2 0%,#FFF9F0 45%,#F0F5FE 100%);
+  border:1px solid #F5E6D2; box-shadow:var(--shadow);
+}
+.hero:after{
+  content:"";position:absolute;right:-40px;top:-60px;width:260px;height:260px;border-radius:50%;
+  background:radial-gradient(circle,#FFD9AE 0%,transparent 70%);opacity:.7;
+}
+/* ---- rabbit doodles ---- */
+.tone-grey{filter:saturate(.3) brightness(1.02);}
+.tone-brown{filter:sepia(.32) saturate(1.3);}
+.title-capy{width:26px;height:26px;border-radius:9px;background:#FFF1DE;display:inline-grid;place-items:center;overflow:hidden;flex:0 0 auto;}
+.title-capy .capy{width:22px;height:22px;}
+.capy{display:block;max-width:100%;height:auto;pointer-events:none;user-select:none;}
+.logo{width:48px;height:48px;border-radius:16px;background:linear-gradient(140deg,#FFE9CC,#FFD9B6);display:grid;place-items:center;box-shadow:0 4px 10px rgba(201,151,100,.25);overflow:hidden;}
+.logo .capy{width:38px;height:38px;}
+.capy-bob{animation:capyBob 3.6s ease-in-out infinite;}
+.capy-sway{animation:capySway 4.4s ease-in-out infinite;}
+@keyframes capyBob{0%,100%{transform:translateY(0) rotate(-1deg);}50%{transform:translateY(-3px) rotate(1deg);}}
+@keyframes capySway{0%,100%{transform:translateY(0) rotate(-2deg);}50%{transform:translateY(-5px) rotate(2deg);}}
+.hero-mascot{position:absolute;right:26px;bottom:8px;width:170px;z-index:1;pointer-events:none;}
+.hero-mascot .capy{width:152px;height:152px;}
+.hero-mascot .capy-bubble{
+  position:absolute;right:-4px;top:-24px;background:#fff;border:1px solid #F2DFC6;border-radius:14px;
+  padding:7px 11px;font-size:12px;color:#8A6A45;white-space:nowrap;box-shadow:0 6px 14px rgba(180,140,90,.12);
+}
+.hero-mascot .capy-paw{position:absolute;left:6px;bottom:6px;font-size:16px;opacity:.5;}
+.hero h2, .hero p{position:relative;z-index:2;max-width:calc(100% - 190px);}
+.empty-capy{display:flex;justify-content:center;margin-bottom:6px;}
+.empty-capy .capy{width:140px;height:140px;}
+.res-capy{display:flex;justify-content:center;margin:-6px 0 4px;}
+.res-capy .capy{width:106px;height:106px;}
+.capy-footer{max-width:1120px;margin:8px auto 30px;padding:0 10px;}
+.capy-parade{display:flex;align-items:flex-end;justify-content:center;gap:8px;opacity:.9;}
+.capy-parade .capy{width:74px;height:74px;}
+.capy-footer p{text-align:center;font-size:12px;color:var(--muted);margin:2px 0 0;}
+@media (max-width:760px){
+  .hero-mascot{position:static;width:auto;margin:0 0 10px;display:flex;justify-content:center;}
+  .hero h2,.hero p{max-width:100%;}
+  .hero-mascot .capy-bubble{display:none;}
+}
+.hero h2{font-family:"Baloo 2",system-ui,sans-serif;font-weight:600;font-size:34px;margin:0 0 8px;letter-spacing:.5px;}
+.hero p{margin:0;color:#6E675D;font-size:14.5px;max-width:620px;}
+.hero .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;position:relative;z-index:2;}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0 26px;}
+.stat{
+  background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;
+}
+.stat .num{font-size:30px;font-weight:800;line-height:1.1;}
+.stat .lbl{font-size:12.5px;color:var(--muted);margin-top:2px;}
+.stat .bar{position:absolute;left:0;top:0;width:5px;height:100%;}
+.stat.c1 .bar{background:var(--la);} .stat.c2 .bar{background:var(--math);}
+.stat.c3 .bar{background:var(--en);} .stat.c4 .bar{background:var(--warn);}
+
+.subject-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
+.subj{
+  border-radius:22px;padding:22px;border:1px solid var(--line);background:#fff;
+  box-shadow:var(--shadow);cursor:pointer;transition:.25s;position:relative;overflow:hidden;
+}
+.subj:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);}
+.subj .ico{font-size:34px;line-height:1;}
+.subj h3{margin:12px 0 4px;font-size:18px;font-weight:700;}
+.subj p{margin:0;color:var(--muted);font-size:13px;min-height:40px;}
+.subj .go{margin-top:14px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:5px;}
+.subj.la .go{color:var(--la);} .subj.math .go{color:var(--math);} .subj.en .go{color:var(--en);}
+.subj.hist .go{color:var(--hist);} .subj.sci .go{color:var(--sci);}
+.subj .wash{position:absolute;right:-30px;bottom:-40px;width:130px;height:130px;border-radius:50%;opacity:.55;pointer-events:none;}
+.subj.la .wash{background:var(--la-soft);} .subj.math .wash{background:var(--math-soft);}
+.subj.en .wash{background:var(--en-soft);} .subj.hist .wash{background:var(--hist-soft);}
+.subj.sci .wash{background:var(--sci-soft);}
+
+.today-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-top:26px;}
+.mini-list{list-style:none;margin:10px 0 0;padding:0;}
+.mini-list li{
+  display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13.5px;
+}
+.mini-list li:last-child{border-bottom:0;}
+.mini-list .dot{width:8px;height:8px;border-radius:50%;background:var(--warn);margin-top:7px;flex:0 0 auto;}
+.mini-list .txt{color:#55504A;}
+.mini-list .time{margin-left:auto;color:#A69E93;font-size:12px;}
+
+/* ===== Subject knowledge ===== */
+.toolbar{
+  display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:#fff;border:1px solid var(--line);
+  border-radius:16px;padding:12px 14px;box-shadow:var(--shadow);margin-bottom:18px;
+}
+.toolbar input[type=search],.toolbar select{
+  padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:#FBF8F3;outline:none;font-size:13.5px;
+}
+.toolbar input[type=search]{flex:1;min-width:170px;}
+.toolbar input:focus,.toolbar select:focus{border-color:#E6B67F;background:#fff;}
+
+.note-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;}
+.note-card{
+  background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:8px;transition:.2s;
+}
+.note-card:hover{box-shadow:var(--shadow-lg);}
+.note-card .nc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+.note-card h4{margin:0;font-size:16px;line-height:1.45;}
+.note-card .nc-meta{font-size:12px;color:#A69E93;display:flex;gap:8px;flex-wrap:wrap;}
+.note-card .nc-preview{
+  font-size:13px;color:#655F58;background:#FBF8F3;border-radius:10px;padding:10px 12px;
+  max-height:118px;overflow:hidden;position:relative;white-space:pre-wrap;line-height:1.7;
+}
+.note-card .nc-preview:after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:34px;
+  background:linear-gradient(transparent,#FBF8F3);
+}
+.note-card .nc-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.note-card .nc-acts{margin-top:auto;display:flex;gap:8px;padding-top:6px;flex-wrap:wrap;}
+
+.empty{
+  text-align:center;padding:56px 20px;color:#A69E93;border:1px dashed #E7DACB;border-radius:18px;background:rgba(255,255,255,.6);
+}
+.empty .big{font-size:40px;display:block;margin-bottom:8px;}
+.empty p{margin:0 0 14px;font-size:13.5px;}
+
+/* ===== Cloze practice ===== */
+.cq-hint{font-size:13px;color:#6E675D;background:#FBF8F3;border:1px dashed #EADACA;border-radius:12px;padding:10px 12px;margin-bottom:14px;}
+.cq{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;transition:.15s;}
+.cq.right{background:var(--ok-soft);border-color:#BFE6D3;}
+.cq.wrong{background:#FFEDE8;border-color:#F3C6B8;}
+.cq .cq-head{display:flex;gap:8px;align-items:center;font-size:11.5px;color:#A69E93;margin-bottom:6px;}
+.cq .idx{width:22px;height:22px;border-radius:50%;background:#FBF7F1;display:grid;place-items:center;color:#7A736A;border:1px solid var(--line);flex:0 0 auto;}
+.cq .cq-text{font-size:15px;line-height:2.2;color:#3A3733;}
+.cq input{
+  min-width:96px;max-width:100%;width:auto;padding:3px 8px;margin:0 2px;
+  border:0;border-bottom:2px solid #DFD3C2;background:transparent;outline:none;font-size:15px;
+  text-align:center;color:#B04A2C;font-weight:600;
+}
+.cq input:focus{border-bottom-color:var(--la);background:#FFFDF8;border-radius:6px 6px 0 0;}
+.cq input.wide{width:min(300px,100%);}
+.cq .cq-peek{
+  width:20px;height:20px;padding:0;border-radius:50%;border:1px solid #E2D6C4;background:#FFFDF8;
+  color:#B0A38F;font-size:11px;line-height:1;cursor:pointer;vertical-align:middle;margin-left:6px;font-weight:400;
+}
+.cq .cq-peek:hover{color:#fff;background:var(--la);border-color:var(--la);}
+.cq .cq-peek.on{color:#fff;background:#C68A2E;border-color:#C68A2E;}
+.cq.revealed{background:#FFFBF0;border-color:#EFE0C2;}
+.cq .cq-fb .peek{color:#8A6A2F;}
+.cq .cq-fb .peek i{font-style:normal;color:#A69E93;font-size:12px;}
+.cq .cq-fb .peek-why{color:#9A9184;font-size:12px;margin-top:2px;}
+.cq .cq-fb{font-size:12.5px;color:#6E675D;margin-top:8px;display:none;white-space:pre-wrap;line-height:1.7;}
+.cq .cq-fb.show{display:block;}
+.cq .cq-fb b{color:#1F7A4F;}
+.result-box{
+  margin-top:16px;padding:18px;border-radius:16px;display:none;background:linear-gradient(120deg,#FFF6E8,#FFFBF4);
+  border:1px dashed #F0DDB8;font-size:13.5px;color:#6E675D;
+}
+.result-box.show{display:block;}
+.result-box h4{margin:0 0 6px;font-size:16px;color:#2B2A28;}
+
+/* ===== Mistakes ===== */
+.mistake-grid{display:grid;gap:14px;margin-top:16px;}
+.mis{background:#fff;border:1px solid var(--line);border-left:4px solid var(--la);border-radius:14px;padding:18px;box-shadow:var(--shadow);}
+.mis.math{border-left-color:var(--math);} .mis.english{border-left-color:var(--en);}
+.mis.history{border-left-color:var(--hist);} .mis.science{border-left-color:var(--sci);}
+.mis .head{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px;}
+.mis .head h4{margin:0;font-size:15px;}
+.mis .qtext{font-size:14.5px;color:#3A3733;background:#FBF8F3;border-radius:10px;padding:11px 13px;white-space:pre-wrap;line-height:1.8;}
+.mis .ansrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:13px;}
+.mis .ans{padding:6px 12px;border-radius:9px;background:#FFEDE8;color:#B04A2C;}
+.mis .ans.right{background:var(--ok-soft);color:#1F7A4F;}
+.mis .ana{margin-top:10px;font-size:13px;color:#6E675D;border-left:3px solid #EFE4D6;padding-left:10px;display:none;white-space:pre-wrap;}
+.mis .ana.show{display:block;}
+.mis .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+
+/* ===== Modal ===== */
+.mask{
+  position:fixed;inset:0;background:rgba(46,40,34,.42);backdrop-filter:blur(3px);
+  z-index:60;display:none;align-items:center;justify-content:center;padding:20px;
+}
+.mask.show{display:flex;animation:fadeIn .2s;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.modal{
+  background:#FFFDF9;border-radius:20px;width:min(680px,100%);max-height:88vh;display:flex;flex-direction:column;
+  box-shadow:0 30px 80px rgba(50,40,25,.3);animation:pop .25s ease;
+}
+@keyframes pop{from{transform:scale(.96);opacity:0;}to{transform:none;opacity:1;}}
+.modal header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line);}
+.modal header h3{margin:0;font-size:17px;}
+.modal .body{padding:20px 22px;overflow:auto;flex:1;min-height:0;}
+.modal footer{display:flex;justify-content:flex-end;gap:10px;padding:14px 22px;border-top:1px solid var(--line);}
+.close{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:16px;line-height:1;}
+
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12.5px;color:#7A736A;margin-bottom:5px;letter-spacing:.3px;}
+.field input,.field select,.field textarea{
+  width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E4D8C8;background:#fff;outline:none;font-size:14px;
+}
+.field textarea{min-height:170px;resize:vertical;line-height:1.8;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#E6B67F;box-shadow:0 0 0 3px rgba(230,182,127,.18);}
+.field .help{font-size:11.5px;color:#A69E93;margin-top:4px;}
+/* Editable practice-question list */
+.cl-badge{display:inline-block;min-width:18px;padding:1px 6px;border-radius:9px;background:#F3E7D3;color:#8A6A2F;font-size:11px;text-align:center;margin-left:4px;}
+.cl-tools{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.cl-list{max-height:260px;overflow:auto;padding:2px;border:1px dashed #EADFCB;border-radius:12px;background:#FFFDF9;}
+.cl-row{padding:8px 10px;border-bottom:1px solid #F3EADA;}
+.cl-row:last-child{border-bottom:0;}
+.cl-top{display:flex;align-items:center;gap:8px;}
+.cl-n{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:#F6EEDF;color:#8A7A63;font-size:11px;display:grid;place-items:center;}
+.cl-row .cl-q{flex:1 1 auto;min-width:0;width:auto;height:48px;min-height:48px;max-height:120px;font-size:13px;line-height:1.5;padding:6px 9px;resize:vertical;font-family:inherit;}
+.cl-ops{display:flex;flex-direction:column;gap:4px;flex:0 0 auto;}
+.cl-swap{width:24px;height:24px;border-radius:50%;border:1px solid #E7DFCB;background:#FFFDF5;color:#8A7A50;cursor:pointer;font-size:11px;line-height:1;}
+.cl-swap:hover{background:#FFF3DE;}
+.cl-bot{display:flex;gap:8px;margin:6px 0 0 28px;}
+.cl-a{flex:0 1 44%;min-width:0;width:auto;font-size:12.5px;padding:5px 8px;color:#B04A2C;font-weight:600;}
+.cl-w{flex:1 1 auto;min-width:0;width:auto;font-size:12px;padding:5px 8px;}
+.cl-del{flex:0 0 auto;width:24px;height:24px;border-radius:50%;border:1px solid #F0D8CE;background:#FFF7F4;color:#C2705A;cursor:pointer;font-size:12px;line-height:1;}
+.cl-del:hover{background:#FFE7DF;}
+.cl-empty{padding:14px;text-align:center;color:#A69E93;font-size:12.5px;}
+.cl-row input{box-sizing:border-box;border:1px solid #E9E0D2;border-radius:8px;background:#fff;outline:none;}
+.cl-row input:focus{border-color:#E6B67F;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* toast */
+.toast{
+  position:fixed;left:50%;bottom:34px;transform:translate(-50%,20px);opacity:0;pointer-events:none;
+  background:#33302C;color:#fff;padding:10px 20px;border-radius:12px;font-size:13.5px;z-index:80;
+  transition:.25s;box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+.toast.show{opacity:1;transform:translate(-50%,0);}
+
+/* ===== Responsive ===== */
+@media (max-width:900px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .subject-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}
+  .today-grid{grid-template-columns:1fr;}
+}
+@media (max-width:640px){
+  .topbar-inner{padding:10px 14px;gap:10px;}
+  .nav{order:3;width:100%;overflow:visible;flex-wrap:wrap;justify-content:center;}
+  .nav button{font-size:13px;padding:6px 11px;}
+  .stats{grid-template-columns:repeat(2,1fr) !important;}
+  .stat .num{font-size:24px;}
+  .stat .lbl{font-size:11.5px;}
+  .wrap{padding:18px 14px 70px;}
+  .hero{padding:24px 20px;border-radius:20px;}
+  .hero h2{font-size:26px;}
+  .field-row{grid-template-columns:1fr;}
+  .modal{border-radius:16px;}
+  .subject-grid{grid-template-columns:1fr 1fr;}
+  .subject-grid .subj:last-child{grid-column:1/-1;}
+  .cq .cq-text{font-size:14.5px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Top bar ===== -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="logo" id="brandLogo"></div>
+      <div>
+        <h1>Little Learning Hub</h1>
+        <small>KNOW · PRACTISE · GROW</small>
+      </div>
+    </div>
+    <nav class="nav" id="nav">
+      <button data-view="home" class="active">🏠 Home</button>
+      <button data-view="chinese">📖 语文</button>
+      <button data-view="math">🔢 Math</button>
+      <button data-view="english">🔤 English</button>
+      <button data-view="history">🏛 History</button>
+      <button data-view="science">🔬 Science</button>
+      <button data-view="mistakes">📕 Mistakes</button>
+    </nav>
+    <div class="tools">
+      <button class="icon-btn" id="btnExport" title="Export all notes and mistakes as a backup">⬇️</button>
+      <button class="icon-btn" id="btnImport" title="Import a backup file">⬆️</button>
+      <input type="file" id="fileImport" accept=".json" hidden>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- ===== Home ===== -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <div class="hero-mascot" id="heroMascot"></div>
+      <h2 id="greeting">Hello, little learner!</h2>
+      <p>This hub now holds only your own notes. Whatever you save under a subject can be turned into fill-in-the-blank questions — practise them, find the gaps, and remember them for good.</p>
+      <div class="hero-actions">
+        <button class="btn primary" data-practice="chinese">✏️ Practise Chinese notes</button>
+        <button class="btn ghost" data-goto="mistakes">📕 Review mistakes</button>
+        <button class="btn ghost" data-add="chinese">＋ Add a note</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat c1"><div class="bar"></div><div class="num" id="stNotes">0</div><div class="lbl">Notes saved</div></div>
+      <div class="stat c2"><div class="bar"></div><div class="num" id="stMistake">0</div><div class="lbl">Mistakes logged</div></div>
+      <div class="stat c3"><div class="bar"></div><div class="num" id="stReview">0</div><div class="lbl">Waiting for review</div></div>
+      <div class="stat c4"><div class="bar"></div><div class="num" id="stMaster">0%</div><div class="lbl">Mastery rate</div></div>
+    </div>
+
+    <div class="subject-grid" id="homeSubjects"></div>
+
+    <div class="today-grid">
+      <div class="card pad">
+        <div class="section-title" style="font-size:17px;">📌 Today's plan</div>
+        <ul class="mini-list" id="homeTodo"></ul>
+      </div>
+      <div class="card pad">
+        <div class="section-title" style="font-size:17px;">💡 How this hub works</div>
+        <p style="font-size:13.5px;color:#6E675D;margin:8px 0 0;">
+          Add a note under any subject — class notes, a worksheet, a summary you wrote yourself. The page builds fill-in-the-blank questions from that text, and every wrong blank lands in the mistake book.
+        </p>
+        <button class="btn sm ghost" style="margin-top:14px;" data-goto="chinese">Open Chinese notes →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 语文 ===== -->
+  <section class="view" id="view-chinese">
+    <div class="section-title">📖 语文 · 学习知识库</div>
+    <p class="section-sub">这里只放你自己整理的内容。每条笔记都可以生成填空练习，用来反复巩固。</p>
+    <div class="toolbar">
+      <input type="search" id="q-chinese" placeholder="搜索标题、标签或笔记内容…">
+      <button class="btn dark" data-practice="chinese">✏️ 填空练习</button>
+      <button class="btn primary" data-add="chinese">＋ 添加笔记</button>
+    </div>
+    <div class="note-grid" id="notes-chinese"></div>
+  </section>
+
+  <!-- ===== Math ===== -->
+  <section class="view" id="view-math">
+    <div class="section-title">🔢 Math · Knowledge Base</div>
+    <p class="section-sub">Formulas, rules and worked examples you have collected. Nothing is preloaded.</p>
+    <div class="toolbar">
+      <input type="search" id="q-math" placeholder="Search title, tags or notes…">
+      <button class="btn dark" data-practice="math">✏️ Fill-in-the-blank practice</button>
+      <button class="btn primary" data-add="math">＋ Add note</button>
+    </div>
+    <div class="note-grid" id="notes-math"></div>
+  </section>
+
+  <!-- ===== English ===== -->
+  <section class="view" id="view-english">
+    <div class="section-title">🔤 English · Knowledge Base</div>
+    <p class="section-sub">Words, sentence patterns and grammar rules from your own notes.</p>
+    <div class="toolbar">
+      <input type="search" id="q-english" placeholder="Search title, tags or notes…">
+      <button class="btn dark" data-practice="english">✏️ Fill-in-the-blank practice</button>
+      <button class="btn primary" data-add="english">＋ Add note</button>
+    </div>
+    <div class="note-grid" id="notes-english"></div>
+  </section>
+
+  <!-- ===== History ===== -->
+  <section class="view" id="view-history">
+    <div class="section-title">🏛 History · Knowledge Base</div>
+    <p class="section-sub">Dates, people and causes you have written down yourself.</p>
+    <div class="toolbar">
+      <input type="search" id="q-history" placeholder="Search title, tags or notes…">
+      <button class="btn dark" data-practice="history">✏️ Fill-in-the-blank practice</button>
+      <button class="btn primary" data-add="history">＋ Add note</button>
+    </div>
+    <div class="note-grid" id="notes-history"></div>
+  </section>
+
+  <!-- ===== Science ===== -->
+  <section class="view" id="view-science">
+    <div class="section-title">🔬 Science · Knowledge Base</div>
+    <p class="section-sub">Facts, definitions and experiments you want to keep.</p>
+    <div class="toolbar">
+      <input type="search" id="q-science" placeholder="Search title, tags or notes…">
+      <button class="btn dark" data-practice="science">✏️ Fill-in-the-blank practice</button>
+      <button class="btn primary" data-add="science">＋ Add note</button>
+    </div>
+    <div class="note-grid" id="notes-science"></div>
+  </section>
+
+  <!-- ===== Mistakes ===== -->
+  <section class="view" id="view-mistakes">
+    <div class="section-title">📕 Mistake Book</div>
+    <p class="section-sub">Every blank you fill in wrongly is recorded here. Review until it says “Mastered”.</p>
+
+    <div class="stats" style="grid-template-columns:repeat(4,1fr);">
+      <div class="stat c1"><div class="bar"></div><div class="num" id="msTotal">0</div><div class="lbl">Total mistakes</div></div>
+      <div class="stat c2"><div class="bar"></div><div class="num" id="msNew">0</div><div class="lbl">To review</div></div>
+      <div class="stat c3"><div class="bar"></div><div class="num" id="msDoing">0</div><div class="lbl">Practising</div></div>
+      <div class="stat c4"><div class="bar"></div><div class="num" id="msDone">0</div><div class="lbl">Mastered</div></div>
+    </div>
+
+    <div class="toolbar">
+      <select id="misSubject">
+        <option value="all">All subjects</option>
+        <option value="chinese">Chinese</option>
+        <option value="math">Math</option>
+        <option value="english">English</option>
+        <option value="history">History</option>
+        <option value="science">Science</option>
+        <option value="other">Other</option>
+      </select>
+      <select id="misStatus">
+        <option value="all">All statuses</option>
+        <option value="new">To review</option>
+        <option value="review">Practising</option>
+        <option value="mastered">Mastered</option>
+      </select>
+      <input type="search" id="misSearch" placeholder="Search questions…">
+      <button class="btn primary" id="btnReviewMode">▶️ Start review</button>
+    </div>
+
+    <div class="mistake-grid" id="mistakeList"></div>
+  </section>
+</div>
+
+<!-- ===== Modal ===== -->
+<div class="mask" id="mask">
+  <div class="modal">
+    <header>
+      <h3 id="modalTitle">Title</h3>
+      <button class="close" id="modalClose">✕</button>
+    </header>
+    <div class="body" id="modalBody"></div>
+    <footer>
+      <button class="btn ghost" id="modalCancel">Cancel</button>
+      <button class="btn primary" id="modalOk">Save</button>
+    </footer>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<footer class="capy-footer" id="capyFooter"></footer>
+
+<script>
+/* ==========================================================================
+   Data
+   ========================================================================== */
+const KEY = 'kids_learning_hub_v3';
+
+const SUBJECTS = {
+  chinese: { label:'Chinese', cn:'语文', icon:'📖', cls:'red',    cardCls:'la',   lang:'zh' },
+  math:    { label:'Math',    cn:'数学', icon:'🔢', cls:'blue',   cardCls:'math', lang:'en' },
+  english: { label:'English', cn:'英语', icon:'🔤', cls:'purple', cardCls:'en',   lang:'en' },
+  history: { label:'History', cn:'历史', icon:'🏛', cls:'brown',  cardCls:'hist', lang:'en' },
+  science: { label:'Science', cn:'科学', icon:'🔬', cls:'teal',   cardCls:'sci',  lang:'en' }
+};
+/* ==========================================================================
+   Rabbit doodles (inline SVG, so the page stays a single self-contained file)
+   ========================================================================== */
+const BUNNY = (() => {
+  const F = '#F6E7D6', D = '#E8CFB6', PINK = '#F3B8BC', NOSE = '#E4858F', K = '#4B3626', BL = '#F7A9A0', ST = '#8A6248';
+  const svg = (size, vb, inner, cls) =>
+    '<svg class="capy ' + (cls || '') + '" width="' + size + '" height="' + size + '" viewBox="' + vb +
+    '" role="img" aria-label="cartoon rabbit">' + inner + '</svg>';
+  /* One long ear, leaning by `rot` degrees, with a pink inside. */
+  const ear = (x, y, rot, len, w) => {
+    const rx = (w || 9), ry = (len || 26);
+    return '<g transform="rotate(' + rot + ' ' + x + ' ' + y + ')">' +
+      '<ellipse cx="' + x + '" cy="' + (y - ry + 4) + '" rx="' + rx + '" ry="' + ry + '" fill="' + F + '"/>' +
+      '<ellipse cx="' + x + '" cy="' + (y - ry + 6) + '" rx="' + (rx * 0.5) + '" ry="' + (ry * 0.66) + '" fill="' + PINK + '"/>' +
+      '</g>';
+  };
+  const faceBits = (cx, cy, rx, ry) =>
+    '<ellipse cx="' + (cx - rx * 0.36) + '" cy="' + (cy - ry * 0.18) + '" rx="3.2" ry="3.4" fill="' + K + '"/>' +
+    '<ellipse cx="' + (cx + rx * 0.36) + '" cy="' + (cy - ry * 0.18) + '" rx="3.2" ry="3.4" fill="' + K + '"/>' +
+    '<circle cx="' + (cx - rx * 0.36 + 1.2) + '" cy="' + (cy - ry * 0.18 - 1.3) + '" r="1.2" fill="#fff"/>' +
+    '<circle cx="' + (cx + rx * 0.36 + 1.2) + '" cy="' + (cy - ry * 0.18 - 1.3) + '" r="1.2" fill="#fff"/>' +
+    '<ellipse cx="' + cx + '" cy="' + (cy + ry * 0.16) + '" rx="3.2" ry="2.6" fill="' + NOSE + '"/>' +
+    '<path d="M' + cx + ' ' + (cy + ry * 0.24) + ' q-4.5 4 -8 1.5" stroke="' + ST + '" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
+    '<path d="M' + cx + ' ' + (cy + ry * 0.24) + ' q4.5 4 8 1.5" stroke="' + ST + '" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
+    '<ellipse cx="' + (cx - rx * 0.62) + '" cy="' + (cy + ry * 0.1) + '" rx="5" ry="2.8" fill="' + BL + '" opacity=".4"/>' +
+    '<ellipse cx="' + (cx + rx * 0.62) + '" cy="' + (cy + ry * 0.1) + '" rx="5" ry="2.8" fill="' + BL + '" opacity=".4"/>';
+  const whiskers = (cx, cy, w) =>
+    '<path d="M' + (cx - 12) + ' ' + (cy + 2) + ' l-' + w + ' -3" stroke="#C9A98A" stroke-width="1.2" fill="none" opacity=".8"/>' +
+    '<path d="M' + (cx - 12) + ' ' + (cy + 5) + ' l-' + w + ' 2" stroke="#C9A98A" stroke-width="1.2" fill="none" opacity=".8"/>' +
+    '<path d="M' + (cx + 12) + ' ' + (cy + 2) + ' l' + w + ' -3" stroke="#C9A98A" stroke-width="1.2" fill="none" opacity=".8"/>' +
+    '<path d="M' + (cx + 12) + ' ' + (cy + 5) + ' l' + w + ' 2" stroke="#C9A98A" stroke-width="1.2" fill="none" opacity=".8"/>';
+
+  return {
+    /* Head with two upright ears — logo and section badges. */
+    face(size, cls){
+      return svg(size, '0 0 100 100',
+        ear(37, 52, -11, 25) + ear(63, 52, 11, 25) +
+        '<ellipse cx="50" cy="64" rx="31" ry="27" fill="' + F + '"/>' +
+        faceBits(50, 64, 31, 27) + whiskers(50, 64, 10),
+        cls);
+    },
+    /* Sitting behind an open book — hero mascot. */
+    read(size, cls){
+      return svg(size, '0 0 150 150',
+        '<ellipse cx="75" cy="141" rx="44" ry="7" fill="#000" opacity=".06"/>' +
+        ear(56, 60, -9, 28) + ear(94, 60, 9, 28) +
+        '<ellipse cx="75" cy="68" rx="34" ry="29" fill="' + F + '"/>' +
+        faceBits(75, 68, 34, 29) + whiskers(75, 68, 11) +
+        '<rect x="56" y="88" width="38" height="42" rx="18" fill="' + F + '"/>' +
+        '<circle cx="95" cy="104" r="6" fill="' + D + '"/>' +
+        '<polygon points="75,96 36,108 36,130 75,119" fill="#FFFCF3" stroke="' + D + '" stroke-width="1.6"/>' +
+        '<polygon points="75,96 114,108 114,130 75,119" fill="#FFFCF3" stroke="' + D + '" stroke-width="1.6"/>' +
+        '<line x1="75" y1="96" x2="75" y2="119" stroke="' + D + '" stroke-width="1.6"/>' +
+        '<line x1="44" y1="116" x2="68" y2="109" stroke="#EFE0CC" stroke-width="2"/>' +
+        '<line x1="82" y1="109" x2="106" y2="116" stroke="#EFE0CC" stroke-width="2"/>' +
+        '<ellipse cx="37" cy="123" rx="8" ry="5.4" fill="' + D + '"/>' +
+        '<ellipse cx="113" cy="123" rx="8" ry="5.4" fill="' + D + '"/>',
+        cls);
+    },
+    /* Curled up asleep on a pile of books. */
+    sleep(size, cls){
+      return svg(size, '0 0 170 145',
+        '<ellipse cx="85" cy="136" rx="58" ry="7" fill="#000" opacity=".06"/>' +
+        '<rect x="34" y="118" width="104" height="12" rx="6" fill="#DCE9D6"/>' +
+        '<rect x="42" y="108" width="88" height="12" rx="6" fill="#FFE3CC"/>' +
+        '<rect x="50" y="98" width="72" height="12" rx="6" fill="#E1E6F7"/>' +
+        '<ellipse cx="78" cy="82" rx="50" ry="26" fill="' + F + '"/>' +
+        '<ellipse cx="118" cy="76" rx="26" ry="23" fill="' + F + '"/>' +
+        '<g transform="rotate(-58 106 62)"><ellipse cx="106" cy="42" rx="8" ry="22" fill="' + F + '"/>' +
+        '<ellipse cx="106" cy="44" rx="4" ry="14" fill="' + PINK + '"/></g>' +
+        '<g transform="rotate(38 134 66)"><ellipse cx="134" cy="48" rx="8" ry="20" fill="' + F + '"/>' +
+        '<ellipse cx="134" cy="50" rx="4" ry="12" fill="' + PINK + '"/></g>' +
+        '<path d="M108 72 q6 -4 12 0" stroke="' + K + '" stroke-width="2.2" fill="none" stroke-linecap="round"/>' +
+        '<path d="M128 72 q6 -4 12 0" stroke="' + K + '" stroke-width="2.2" fill="none" stroke-linecap="round"/>' +
+        '<ellipse cx="124" cy="84" rx="3.4" ry="2.7" fill="' + NOSE + '"/>' +
+        '<path d="M124 87 q-4 4 -7 1" stroke="' + ST + '" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
+        '<ellipse cx="104" cy="84" rx="4.6" ry="2.6" fill="' + BL + '" opacity=".4"/>' +
+        '<ellipse cx="144" cy="84" rx="4.6" ry="2.6" fill="' + BL + '" opacity=".4"/>' +
+        '<circle cx="46" cy="94" r="6" fill="' + D + '"/>' +
+        '<text x="140" y="34" font-size="17" font-weight="700" fill="#A9BBCB">z</text>' +
+        '<text x="154" y="20" font-size="12" font-weight="700" fill="#C1CEDC">z</text>' +
+        '<text x="40" y="34" font-size="13" font-weight="700" fill="#C1CEDC">z</text>',
+        cls);
+    },
+    /* Arms up with a star — perfect score. */
+    cheer(size, cls){
+      return svg(size, '0 0 140 150',
+        '<ellipse cx="70" cy="142" rx="34" ry="6" fill="#000" opacity=".06"/>' +
+        ear(54, 56, -8, 24) + ear(86, 56, 8, 24) +
+        '<ellipse cx="70" cy="66" rx="30" ry="26" fill="' + F + '"/>' +
+        faceBits(70, 66, 30, 26) + whiskers(70, 66, 9) +
+        '<path d="M66 74 q4 7 8 0 q-4 3 -8 0z" fill="' + NOSE + '"/>' +
+        '<rect x="48" y="82" width="44" height="50" rx="20" fill="' + F + '"/>' +
+        '<path d="M48 100 q-14 -16 -13 -28" stroke="' + F + '" stroke-width="9" fill="none" stroke-linecap="round"/>' +
+        '<path d="M92 100 q16 -18 18 -32" stroke="' + F + '" stroke-width="9" fill="none" stroke-linecap="round"/>' +
+        '<circle cx="35" cy="72" r="5.4" fill="' + D + '"/>' +
+        '<circle cx="110" cy="68" r="5.4" fill="' + D + '"/>' +
+        '<ellipse cx="56" cy="128" rx="8" ry="5" fill="' + D + '"/>' +
+        '<ellipse cx="84" cy="128" rx="8" ry="5" fill="' + D + '"/>' +
+        '<polygon points="118,18 122,29 134,29 124,36 128,48 118,41 108,48 112,36 102,29 114,29" fill="#F5C451" stroke="#E0A93A" stroke-width="1.2" stroke-linejoin="round"/>' +
+        '<circle cx="20" cy="26" r="3" fill="#F5A9A0"/><circle cx="28" cy="44" r="2.4" fill="#A9C9E8"/>' +
+        '<circle cx="102" cy="12" r="2.6" fill="#A9C9E8"/><circle cx="130" cy="60" r="2.8" fill="#F5A9A0"/>',
+        cls);
+    },
+    /* Sitting with a thought bubble — needs another go. */
+    think(size, cls){
+      return svg(size, '0 0 140 150',
+        '<ellipse cx="70" cy="142" rx="34" ry="6" fill="#000" opacity=".06"/>' +
+        ear(54, 58, -8, 24) + ear(86, 58, 8, 24) +
+        '<ellipse cx="70" cy="68" rx="30" ry="26" fill="' + F + '"/>' +
+        faceBits(70, 68, 30, 26) + whiskers(70, 68, 9) +
+        '<rect x="48" y="84" width="44" height="48" rx="20" fill="' + F + '"/>' +
+        '<path d="M48 100 q-14 -14 -13 -26" stroke="' + F + '" stroke-width="9" fill="none" stroke-linecap="round"/>' +
+        '<circle cx="35" cy="72" r="5.4" fill="' + D + '"/>' +
+        '<ellipse cx="56" cy="126" rx="8" ry="5" fill="' + D + '"/>' +
+        '<ellipse cx="84" cy="126" rx="8" ry="5" fill="' + D + '"/>' +
+        '<circle cx="106" cy="28" r="4" fill="#FFFDF8" stroke="#E8D6BB"/>' +
+        '<circle cx="114" cy="18" r="6.5" fill="#FFFDF8" stroke="#E8D6BB"/>' +
+        '<ellipse cx="124" cy="6" rx="15" ry="12" fill="#FFFDF8" stroke="#E8D6BB"/>' +
+        '<text x="117" y="12" font-size="15" font-weight="800" fill="#E0A563">?</text>',
+        cls);
+    }
+  };
+})();
+
+const SUBJECT_KEYS = Object.keys(SUBJECTS);
+
+/* The one note that ships with the page: the 《星际动物园》 worksheet, with answers. */
+const DEFAULT_NOTES = [
+  {
+    id: 'seed-xingji',
+    subject: 'chinese',
+    title: '《星际动物园》学习笔记',
+    source: '课堂笔记 / 老师讲义',
+    date: '2026-11-21',
+    tags: '科幻小说 星新一 阅读理解 结尾反转 人类中心主义',
+    keyTerms: '科幻小说 星新一 人物 情节 环境 宇宙币 地球人 最好看 人类中心主义 宇宙意识 谦逊',
+    content:
+      '【文学常识】\n' +
+      '1. 体裁：科幻小说。作者：星新一，日本著名科幻作家，擅长用短小精巧的故事写出社会的荒诞与哲理。\n' +
+      '2. 小说三要素：人物、情节、环境。人物是故事的承担者，情节推动故事发展，环境交代人物活动的背景。\n' +
+      '3. “宇宙币”：宇宙间通用的货币，是各星球之间买卖、交易用的钱。地球人用它买门票进“动物园”参观，说明星际之间已经有了商业往来；也让读者以为地球人是“顾客”“参观者”，为结尾的反转埋下伏笔。\n' +
+      '\n【核心句与结尾】\n' +
+      '4. 地球人说：“这是我们参观过的最好的动物园……”结尾小马蜘蛛也说：“那是我参观过的最好看的动物园……”\n' +
+      '两句话句式对称、互相呼应，却构成了强烈的反转。真相是：被关在园子里、被观赏的“动物”，正是地球人自己。地球人以为自己在看动物，其实自己才是展品。\n' +
+      '所以“谁在参观谁”“谁是宇宙的主宰”，答案被彻底颠倒：人类并不是宇宙的中心，更没有资格把别的星球的生命当作“动物”来观赏。\n' +
+      '这篇科幻小说富有哲理，它以独特的视角，反映了人类的自大与偏见（人类中心主义的荒谬）。地球人把其他星球上的人看作动物，其他星球上的人把地球人看作动物，这是作家宇宙意识的体现：提醒人类放下傲慢，以平等的眼光看待其他生命与文明。\n' +
+      '\n【道理】\n' +
+      '5. 不要以自我为中心、傲慢地看待“他者”；换个角度看世界，尊重与自己不同的生命和文明；人类在宇宙中只是普通一员，应保持谦逊与好奇。',
+    cloze: [
+      { q:'《星际动物园》这篇课文的体裁是＿＿。', a:['科幻小说','小说'], why:'体裁：科幻小说。全文用星际旅行的想象写出人类的自大与偏见。' },
+      { q:'《星际动物园》的作者是日本科幻作家＿＿。', a:['星新一'], why:'星新一擅长用短小精巧的科幻故事讲哲理。' },
+      { q:'小说三要素是人物、情节和＿＿。', a:['环境'], why:'人物、情节、环境是小说的三要素：人物承担故事，情节推动发展，环境提供背景。' },
+      { q:'小说三要素中，负责安排事件、推动故事发展的是＿＿。', a:['情节'], why:'情节是故事中事件的发展过程，人物的性格也在情节里显现。' },
+      { q:'星际之间通用的货币叫“＿＿”，地球人用它买动物园的门票。', a:['宇宙币'], why:'“宇宙币”说明星际之间已有商业往来，也让读者以为地球人是来参观的顾客。' },
+      { q:'结尾小马蜘蛛说：“那是我参观过的＿＿的动物园。”', a:['最好看','最好看的'], why:'这句与地球人的“最好的动物园”句式对称，构成反转。' },
+      { q:'结尾的反转揭示：被关在园里、被参观的“动物”其实是＿＿。', a:['地球人','人类'], why:'地球人以为自己在看动物，其实自己才是展品。谁在参观谁被彻底颠倒。' },
+      { q:'文章借“谁在参观谁”的颠倒，讽刺了人类的＿＿主义。', a:['人类中心','人类中心主义'], why:'人类自以为宇宙的中心，把别的星球生命当作动物，这正是人类中心主义的荒谬。' },
+      { q:'作者在结尾体现出的宇宙意识，是提醒人类不要把自己当作宇宙的＿＿。', a:['主宰','中心'], why:'人类只是宇宙中的普通一员，没有资格主宰或观赏其他生命。' },
+      { q:'从文中得到的道理是：人类应保持＿＿与好奇，平等看待不同的生命与文明。', a:['谦逊','谦虚'], why:'放下傲慢，换个角度看世界，尊重与自己不同的生命和文明。' }
+    ]
+  },
+  {
+    id: 'seed-egypt',
+    subject: 'history',
+    title: 'Chapter 3 — Ancient Egypt and Kush',
+    source: "World History · Chapter 3 (Ian's notes)",
+    date: '2026-11-22',
+    tags: 'Ancient Egypt, Kush, Nile, mummification, society, timeline',
+    keyTerms: 'mummification linen 1922 gold bandages medical women stitch spoon reed tissue Anubis river Mediterranean delta cataracts south Red pharaoh officials traders unskilled Hopi Kush hieroglyphics Hatshepsut Tutankhamun',
+    content: `CHAPTER 3 · INTRODUCING ANCIENT EGYPT AND KUSH
+
+CARING FOR THE BODY
+Ancient Egyptians believed that preparing the body through mummification would help the soul achieve eternal life. Mummies were made by treating the body with oils, removing some of the internal organs, drying out the body, and then wrapping it in linen.
+
+COFFINS
+In 1922, an English archaeologist discovered the largely intact tomb of Tutankhamen (King Tut) in Egypt. The tomb contained a solid gold coffin and numerous riches.
+
+MEDICAL KNOWLEDGE
+Doctors in ancient Egypt — who included women — used various tools to treat patients. Egyptian doctors were the first to use splints and bandages, and they created the world's first medical books by writing down their medical knowledge.
+Tools and uses: needle and thread → stitch wounds; spoon → apply ointment; hollow reed → insert medicine; curved scalpel → remove dead tissue; straight scalpel → cut through skin and tissue; forceps → remove parasites or tumors.
+
+THE AFTERLIFE
+Egyptians believed that Anubis, the jackal-headed god, invented embalming — the process of preserving the body after death.
+
+UNDERSTANDING THE TIME AND PLACE (5000 B.C.E. – 350 C.E.)
+Between 6000 and 5000 B.C.E., hunters and food gatherers moved into the lush Nile River valley from less fertile areas of Africa and Southwest Asia. They settled down, farmed the land and built villages along the riverbanks. These people became the earliest Egyptians.
+
+THE NILE RIVER
+Ancient Egyptians settled along the Nile River and used it for drinking, bathing, fishing, farming, cooking and cleaning. The Nile is the world's longest river, about 4,000 miles (6,437 km) long. It flows south to north through East Africa and empties into the Mediterranean Sea, creating a delta of fertile marshland. Deserts to the east and west and a series of cataracts along the Nile created natural barriers against invaders. Upper Egypt is in the south; Lower Egypt is in the north. The Red Sea lies east of the Nile, and Thebes lies south of Memphis.
+
+SOCIETY
+People with similar levels of wealth, influence and status formed the same social class. At the top were the pharaoh and family; the Upper Class were nobles, priests, scribes and government officials; the Middle Class were shopkeepers, artisans and traders; the Lower Class were farmers and unskilled workers. Status therefore decided a person's social class, wealth, influence and way of life.
+
+RELIGION
+Two of the most important gods were the sun god Re and the river god Hopi. Egyptians believed in a peaceful life after death, especially for the pharaohs, so they preserved the pharaoh's body and placed it in a pyramid tomb. Pyramids contained goods for the afterlife, including food, weapons, clothing, jewelry and boats.
+
+GOVERNMENT
+Ancient civilizations needed governments to manage food supplies, carry out trade and settle land disputes. The earliest rulers were village chiefs; by 3100 B.C.E. a unified kingdom emerged in Upper and Lower Egypt, headed by a single ruler known as the pharaoh.
+
+OTHER SETTLERS
+Cattle herders from the grassy plains south of the Sahara settled in the region south of Egypt and established farming villages in what is today Sudan. This region was called Nubia, later known as Kush. The Kushites and the Egyptians fought, traded and learned from each other.
+
+KEY EVENTS
+c. 3100 B.C.E. Narmer unites Upper and Lower Egypt into one kingdom.
+c. 3000 B.C.E. Egyptians develop hieroglyphics, a writing system.
+c. 2600 B.C.E. The Old Kingdom begins in Egypt.
+c. 2550 B.C.E. Building of the Great Pyramid begins.
+c. 1550 B.C.E. The New Kingdom begins in Egypt.
+c. 1473 B.C.E. Queen Hatshepsut rules Egypt.
+c. 1360 B.C.E. Tutankhamun becomes pharaoh.
+c. 850 B.C.E. The kingdom of Kush begins.
+c. 750 B.C.E. The Kushite army conquers Egypt.
+c. 350 C.E. The Kushite kingdom falls.`,
+    cloze: [
+      { q:'Ancient Egyptians believed that preparing the body through ＿＿ would help the soul reach eternal life.', a:['mummification'], why:'Mummification is the process of preserving a body so the soul could live on.' },
+      { q:'Mummies were wrapped in ＿＿.', a:['linen'], why:'After the body was dried, it was wrapped in linen.' },
+      { q:'In ＿＿, an English archaeologist discovered the tomb of Tutankhamen.', a:['1922'], why:'The tomb of King Tut was found in 1922, largely intact.' },
+      { q:'Tutankhamen\u2019s tomb contained a solid ＿＿ coffin and many riches.', a:['gold'], why:'The coffin was made of solid gold.' },
+      { q:'Egyptian doctors were the first to use splints and ＿＿.', a:['bandages'], why:'Splints and bandages were early Egyptian medical inventions.' },
+      { q:'Egyptian doctors created the world\u2019s first ＿＿ books by writing down their knowledge.', a:['medical'], why:'Their written records became the world\u2019s first medical books.' },
+      { q:'Doctors in ancient Egypt included ＿＿ as well as men.', a:['women'], why:'The notes say doctors "included women".' },
+      { q:'A needle and thread was used to ＿＿ wounds.', a:['stitch'], why:'Needle and thread → stitch wounds.' },
+      { q:'A ＿＿ was used to apply ointment.', a:['spoon'], why:'Spoon → apply ointment.' },
+      { q:'A hollow ＿＿ was used to insert medicine.', a:['reed'], why:'Hollow reed → insert medicine.' },
+      { q:'A curved scalpel was used to remove ＿＿ tissue.', a:['dead'], why:'Curved scalpel → remove dead tissue.' },
+      { q:'Forceps were used to remove parasites or ＿＿.', a:['tumors','tumours'], why:'Forceps → remove parasites or tumors.' },
+      { q:'Egyptians believed that ＿＿, the jackal-headed god, invented embalming.', a:['Anubis'], why:'Anubis was the jackal-headed god who invented embalming.' },
+      { q:'The Nile is the world\u2019s longest ＿＿, about 4,000 miles long.', a:['river'], why:'The Nile is about 4,000 miles (6,437 km) long.' },
+      { q:'The Nile flows south to north and empties into the ＿＿ Sea.', a:['Mediterranean'], why:'It ends in a fertile delta on the Mediterranean coast.' },
+      { q:'A ＿＿ is an area of soil deposits that builds up where river water slows down.', a:['delta'], why:'That is the definition of a delta in the notes.' },
+      { q:'＿＿ are wild rapids along the Nile.', a:['cataracts','Cataracts'], why:'Cataracts formed natural barriers against invaders.' },
+      { q:'Upper Egypt is in the ＿＿; Lower Egypt is in the north.', a:['south'], why:'The Nile flows north, so upstream (Upper Egypt) is in the south.' },
+      { q:'The ＿＿ Sea lies east of the Nile River.', a:['Red'], why:'The Red Sea lies east of the Nile, beside the Arabian Desert.' },
+      { q:'Thebes lies ＿＿ of Memphis.', a:['south'], why:'Memphis is in the north (Lower Egypt); Thebes is farther south (Upper Egypt).' },
+      { q:'In Egyptian society the ＿＿ and their family were at the top.', a:['pharaoh','pharaohs'], why:'Pharaoh and family formed the top social class.' },
+      { q:'The Upper Class included nobles, priests, scribes and government ＿＿.', a:['officials'], why:'Government officials belonged to the Upper Class.' },
+      { q:'The Middle Class were shopkeepers, artisans and ＿＿.', a:['traders'], why:'Middle Class: shopkeepers, artisans, traders.' },
+      { q:'The Lower Class were farmers and ＿＿ workers.', a:['unskilled'], why:'Lower Class: farmers and unskilled workers.' },
+      { q:'The two most important gods were the sun god Re and the river god ＿＿.', a:['Hopi'], why:'Re was the sun god; Hopi was the river god.' },
+      { q:'By 3100 B.C.E. a unified kingdom emerged, headed by a single ruler called the ＿＿.', a:['pharaoh'], why:'The pharaoh headed the united kingdom of Upper and Lower Egypt.' },
+      { q:'The region south of Egypt was called Nubia, later known as ＿＿.', a:['Kush'], why:'Cattle herders settled there; the region later became Kush.' },
+      { q:'c. 3000 B.C.E. Egyptians developed ＿＿, a writing system.', a:['hieroglyphics'], why:'Hieroglyphics was the Egyptian writing system.' },
+      { q:'c. 1473 B.C.E. Queen ＿＿ rules Egypt.', a:['Hatshepsut'], why:'Hatshepsut ruled around 1473 B.C.E.' },
+      { q:'c. 1360 B.C.E. ＿＿ becomes pharaoh.', a:['Tutankhamun','Tutankhamen'], why:'King Tut became pharaoh around 1360 B.C.E.' },
+      { q:'c. 750 B.C.E. the Kushite ＿＿ conquers Egypt.', a:['army'], why:'The Kushite army conquered Egypt around 750 B.C.E.' }
+    ]
+  }
+];
+
+const SEED_VERSION = 2;
+let STORE = { notes: [], mistakes: [], seeded: false, seedVersion: 0, legacyMerged: false };
+
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function ts(x){
+  if(!x) return 0;
+  if(typeof x === 'number') return x;
+  const p = Date.parse(x);
+  return isNaN(p) ? 0 : p;
+}
+function todayStr(){
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate());
+}
+function esc(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(STORE)); }
+  catch(e){ toast('Could not save: browser storage is full'); }
+}
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw){
+      const p = JSON.parse(raw);
+      if(Array.isArray(p.notes)) STORE.notes = p.notes;
+      if(Array.isArray(p.mistakes)) STORE.mistakes = p.mistakes;
+      STORE.seeded = !!p.seeded;
+      STORE.seedVersion = Number(p.seedVersion) || (p.seeded ? 1 : 0);
+      STORE.legacyMerged = !!p.legacyMerged;
+    }
+  }catch(e){ console.warn('Could not read saved data', e); }
+
+  /* Keep whatever was already in the mistake book from the earlier versions of this page. */
+  if(!STORE.legacyMerged){
+    ['kids_learning_hub_v1','kids_learning_hub_v2'].forEach(oldKey => {
+      try{
+        const raw = localStorage.getItem(oldKey);
+        if(!raw) return;
+        const p = JSON.parse(raw);
+        if(!Array.isArray(p.mistakes)) return;
+        p.mistakes.forEach(m => {
+          const subject = ({chinese:'chinese', language:'chinese', math:'math', english:'english', history:'history', science:'science'})[m.subject] || 'other';
+          const item = {
+            id: uid(),
+            subject: subject,
+            source: m.source || 'Earlier practice',
+            question: m.question || '',
+            myAnswer: m.myAnswer || '',
+            answer: m.answer || '',
+            analysis: m.analysis || '',
+            tags: m.tags || '',
+            status: m.status || 'new',
+            reviewCount: m.reviewCount || 0,
+            createdAt: m.createdAt || m.date || todayStr(),
+            lastReview: m.lastReview || ''
+          };
+          if(!item.question) return;
+          const dup = STORE.mistakes.some(x => x.question === item.question && String(x.createdAt) === String(item.createdAt));
+          if(!dup) STORE.mistakes.push(item);
+        });
+      }catch(e){ console.warn('Could not read the older mistake book', e); }
+    });
+    STORE.legacyMerged = true;
+  }
+
+  /* Seed the starter notes once per version, so a note you delete never comes back. */
+  if(!STORE.seeded || STORE.seedVersion < SEED_VERSION){
+    DEFAULT_NOTES.forEach(d => {
+      if(!STORE.notes.some(n => n.id === d.id)){
+        STORE.notes.push(JSON.parse(JSON.stringify(d)));
+      }
+    });
+    STORE.seeded = true;
+    STORE.seedVersion = SEED_VERSION;
+  }
+  save();
+}
+load();
+
+/* ==========================================================================
+   Shared UI
+   ========================================================================== */
+let toastTimer = null;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> el.classList.remove('show'), 2200);
+}
+
+const mask = document.getElementById('mask');
+const modalTitle = document.getElementById('modalTitle');
+const modalBody = document.getElementById('modalBody');
+const modalOk = document.getElementById('modalOk');
+let modalSubmit = null;
+
+function openModal({ title, body, okText='Save', onSubmit=null, closeText='Close', cancelText='Cancel' }){
+  modalTitle.textContent = title;
+  modalBody.innerHTML = body;
+  modalOk.textContent = okText;
+  modalOk.style.display = onSubmit ? '' : 'none';
+  document.getElementById('modalCancel').textContent = onSubmit ? cancelText : closeText;
+  modalSubmit = onSubmit;
+  mask.classList.add('show');
+}
+function closeModal(){
+  mask.classList.remove('show');
+  modalSubmit = null;
+  modalBody.innerHTML = '';
+  if(currentView === 'mistakes') renderMistakes();
+  if(currentView === 'home') renderHome();
+}
+document.getElementById('modalClose').onclick = closeModal;
+document.getElementById('modalCancel').onclick = closeModal;
+mask.addEventListener('click', e => { if(e.target === mask) closeModal(); });
+modalOk.onclick = () => {
+  if(!modalSubmit) return closeModal();
+  const keep = modalSubmit();
+  if(keep !== false) closeModal();
+};
+
+/* ==========================================================================
+   Router
+   ========================================================================== */
+const views = ['home'].concat(SUBJECT_KEYS, ['mistakes']);
+let currentView = 'home';
+
+function go(view, push=true){
+  if(!views.includes(view)) view = 'home';
+  currentView = view;
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + view));
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  if(push){ try{ history.replaceState(null,'','#'+view); }catch(e){} }
+  if(view === 'home') renderHome();
+  if(view === 'mistakes') renderMistakes();
+  if(SUBJECTS[view]) renderSubject(view);
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+document.getElementById('nav').addEventListener('click', e => {
+  const b = e.target.closest('button[data-view]');
+  if(b) go(b.dataset.view);
+});
+document.addEventListener('click', e => {
+  const g = e.target.closest('[data-goto]');
+  if(g) go(g.dataset.goto);
+  const add = e.target.closest('[data-add]');
+  if(add){ openNoteForm(null, add.dataset.add); return; }
+  const prac = e.target.closest('[data-practice]');
+  if(prac){
+    const key = prac.dataset.practice;
+    const notes = STORE.notes.filter(n => n.subject === key);
+    const meta = SUBJECTS[key];
+    startPractice(notes, meta.lang === 'zh' ? meta.cn : meta.label, meta.lang);
+  }
+});
+window.addEventListener('hashchange', () => {
+  const v = location.hash.replace('#','');
+  if(v && v !== currentView) go(v, false);
+});
+
+/* ==========================================================================
+   Home
+   ========================================================================== */
+function renderHome(){
+  const total = STORE.mistakes.length;
+  const done = STORE.mistakes.filter(m => m.status === 'mastered').length;
+  const todo = total - done;
+  document.getElementById('stNotes').textContent = STORE.notes.length;
+  document.getElementById('stMistake').textContent = total;
+  document.getElementById('stReview').textContent = todo;
+  document.getElementById('stMaster').textContent = total ? Math.round(done / total * 100) + '%' : '0%';
+
+  const h = new Date().getHours();
+  const greet = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('greeting').textContent = greet + ', little learner!';
+
+  document.getElementById('homeSubjects').innerHTML = SUBJECT_KEYS.map(k => {
+    const s = SUBJECTS[k];
+    const zh = s.lang === 'zh';
+    const count = STORE.notes.filter(n => n.subject === k).length;
+    return '<div class="subj ' + s.cardCls + '" data-goto="' + k + '">' +
+      '<div class="wash"></div>' +
+      '<div class="ico">' + s.icon + '</div>' +
+      '<h3>' + (zh ? s.cn : s.label + ' <span style="font-weight:400;color:#A69E93;font-size:14px;">' + s.cn + '</span>') + '</h3>' +
+      '<p>' + (zh
+        ? (count ? '已有 ' + count + ' 条笔记' : '还没有笔记，自己添加')
+        : (count ? count + ' note' + (count > 1 ? 's' : '') + ' saved' : 'No notes yet — add your own')) + '</p>' +
+      '<div class="go">' + (zh ? '进入' + s.cn : 'Open ' + s.label) + ' →</div>' +
+    '</div>';
+  }).join('');
+
+  const todos = [];
+  if(todo > 0) todos.push({ txt:'Review ' + todo + ' mistake' + (todo > 1 ? 's' : '') + ' in the mistake book', go:'mistakes', time:'' });
+  if(STORE.notes.length === 0) todos.push({ txt:'Add your first note under any subject', go:'chinese', time:'' });
+  else todos.push({ txt:'Do one fill-in-the-blank set from your notes', go:'chinese', time:'5 min' });
+  todos.push({ txt:'Add one new note from today\u2019s class', go:'chinese', time:'3 min' });
+  todos.push({ txt:'Read your newest note aloud, then retell it without looking', go:'chinese', time:'4 min' });
+
+  document.getElementById('homeTodo').innerHTML = todos.slice(0,5).map(t =>
+    '<li data-goto="' + t.go + '" style="cursor:pointer;"><span class="dot"></span><span class="txt">' +
+    esc(t.txt) + '</span>' + (t.time ? '<span class="time">' + t.time + '</span>' : '') + '</li>'
+  ).join('');
+}
+
+/* ==========================================================================
+   Subject pages
+   ========================================================================== */
+function renderSubject(key){
+  const s = SUBJECTS[key];
+  const grid = document.getElementById('notes-' + key);
+  const qEl = document.getElementById('q-' + key);
+  if(!grid || !s) return;
+  const zh = s.lang === 'zh';
+  const q = (qEl ? qEl.value : '').trim().toLowerCase();
+
+  let list = STORE.notes.filter(n => n.subject === key);
+  if(q) list = list.filter(n => [n.title, n.source, n.tags, n.content].join(' ').toLowerCase().indexOf(q) >= 0);
+  list.sort((a,b) => (b.date || '').localeCompare(a.date || '') || (b.createdAt || 0) - (a.createdAt || 0));
+
+  if(list.length === 0){
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1;"><div class="empty-capy">' + BUNNY.sleep(118) + '</div>' +
+      '<p>' + (STORE.notes.some(n => n.subject === key)
+        ? (zh ? '没有符合搜索条件的笔记。' : 'Nothing matches this search.')
+        : (zh ? '「' + s.cn + '」还没有笔记，先添加第一条吧，练习题会由它生成。' : 'No notes under ' + s.label + ' yet. Add the first one — practice questions are generated from it.')) + '</p>' +
+      '<button class="btn primary" data-add="' + key + '">' + (zh ? '＋ 添加笔记' : '＋ Add note') + '</button></div>';
+    return;
+  }
+
+  grid.innerHTML = list.map(n => {
+    const preview = String(n.content || '').replace(/\s+/g,' ').slice(0, 160);
+    const blankCount = itemsForNote(n).length;
+    return '<div class="note-card">' +
+      '<div class="nc-top">' +
+        '<h4>' + esc(n.title) + '</h4>' +
+        '<span class="chip ' + s.cls + '" style="flex:0 0 auto;">' + s.icon + ' ' + (zh ? s.cn : s.label) + '</span>' +
+      '</div>' +
+      '<div class="nc-meta">' +
+        (n.source ? '<span>' + esc(n.source) + '</span>' : '') +
+        (n.date ? '<span>' + (n.source ? '· ' : '') + esc(n.date) + '</span>' : '') +
+        '<span>' + ((n.source || n.date) ? '· ' : '') + blankCount + (zh ? ' 个填空' : ' blank' + (blankCount > 1 ? 's' : '')) + '</span>' +
+      '</div>' +
+      '<div class="nc-preview">' + esc(preview) + '</div>' +
+      (n.tags ? '<div class="nc-tags">' + n.tags.split(/[,，、\s]+/).filter(Boolean).map(t =>
+        '<span class="chip" style="font-size:11.5px;padding:2px 9px;">#' + esc(t) + '</span>').join('') + '</div>' : '') +
+      '<div class="nc-acts">' +
+        '<button class="btn sm primary" data-note-practice="' + n.id + '">✏️ ' + (zh ? '练习' : 'Practise') + '</button>' +
+        '<button class="btn sm ghost" data-note-view="' + n.id + '">' + (zh ? '查看' : 'View') + '</button>' +
+        '<button class="btn sm ghost" data-note-edit="' + n.id + '">' + (zh ? '编辑' : 'Edit') + '</button>' +
+        '<button class="btn sm ghost" data-note-del="' + n.id + '" style="color:#B04A2C;">' + (zh ? '删除' : 'Delete') + '</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+SUBJECT_KEYS.forEach(k => {
+  const qEl = document.getElementById('q-' + k);
+  if(qEl) qEl.addEventListener('input', () => renderSubject(k));
+  const grid = document.getElementById('notes-' + k);
+  if(!grid) return;
+  grid.addEventListener('click', e => {
+    const p = e.target.closest('[data-note-practice]');
+    if(p){
+      const n = STORE.notes.find(x => x.id === p.dataset.notePractice);
+      if(n) startPractice([n], n.title, (SUBJECTS[n.subject] || {}).lang);
+      return;
+    }
+    const v = e.target.closest('[data-note-view]');
+    if(v){
+      const n = STORE.notes.find(x => x.id === v.dataset.noteView);
+      if(n) viewNote(n);
+      return;
+    }
+    const ed = e.target.closest('[data-note-edit]');
+    if(ed){
+      const n = STORE.notes.find(x => x.id === ed.dataset.noteEdit);
+      if(n) openNoteForm(n, n.subject);
+      return;
+    }
+    const dl = e.target.closest('[data-note-del]');
+    if(dl){
+      const n = STORE.notes.find(x => x.id === dl.dataset.noteDel);
+      if(!n) return;
+      const zh = (SUBJECTS[n.subject] || {}).lang === 'zh';
+      if(confirm(zh ? '确定删除「' + n.title + '」吗？笔记和它的填空题会一起删除。' : 'Delete “' + n.title + '”? The note and its practice questions will be removed.')){
+        STORE.notes = STORE.notes.filter(x => x.id !== n.id);
+        save(); renderSubject(n.subject); renderHome(); toast(zh ? '笔记已删除' : 'Note deleted');
+      }
+    }
+  });
+});
+
+function viewNote(n){
+  const s = SUBJECTS[n.subject] || SUBJECTS.chinese;
+  const zh = s.lang === 'zh';
+  const blanks = itemsForNote(n).length;
+  openModal({
+    title: n.title,
+    okText: zh ? '关闭' : 'Close',
+    body:
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">' +
+        '<span class="chip ' + s.cls + '">' + s.icon + ' ' + (zh ? s.cn : s.label) + '</span>' +
+        (n.source ? '<span class="chip">' + esc(n.source) + '</span>' : '') +
+        (n.date ? '<span class="chip">' + esc(n.date) + '</span>' : '') +
+        '<span class="chip">' + blanks + (zh ? ' 个填空' : ' blanks') + '</span>' +
+      '</div>' +
+      (n.tags ? '<div style="margin-bottom:12px;">' + n.tags.split(/[,，、\s]+/).filter(Boolean).map(t =>
+        '<span class="chip" style="margin-right:6px;">#' + esc(t) + '</span>').join('') + '</div>' : '') +
+      '<div style="white-space:pre-wrap;font-size:14px;line-height:1.95;background:#FBF8F3;padding:16px;border-radius:12px;">' + esc(n.content) + '</div>' +
+      '<div style="margin-top:14px;text-align:right;">' +
+        '<button class="btn primary" id="viewPractice">✏️ ' + (zh ? '练习这条笔记' : 'Practise this note') + '</button>' +
+      '</div>'
+  });
+  document.getElementById('viewPractice').onclick = () => { closeModal(); startPractice([n], n.title, s.lang); };
+}
+
+/* ==========================================================================
+   Note form
+   ========================================================================== */
+/* Put the blank on a different word of the same sentence. */
+function cycleBlank(q, ansStr, terms){
+  const first = String(ansStr || '').split(/[\/／|｜,，、]+/).map(x => x.trim()).filter(Boolean)[0];
+  if(!first) return null;
+  const sent = String(q).indexOf('＿＿') >= 0 ? String(q).split('＿＿').join(first) : String(q);
+  const cands = [];
+  const seen = new Set();
+  const push = (w, at) => {
+    if(w.length < 2 || seen.has(w)) return;
+    if(STOP_CN.includes(w) || STOP_EN.includes(w.toLowerCase())) return;
+    seen.add(w); cands.push({ w, at });
+  };
+  (sent.match(/[A-Za-z][A-Za-z'\-]{3,}/g) || []).forEach(w => push(w, sent.indexOf(w)));
+  /* Chinese: only blank words the note itself lists as key terms, so the gap never lands mid-word. */
+  String(terms || '').split(/[,，、\s]+/).filter(t => t.length >= 2).forEach(t => {
+    let at = sent.indexOf(t);
+    while(at >= 0){ push(t, at); at = sent.indexOf(t, at + 1); }
+  });
+  /* No key terms given: split the Chinese sentence at function words and cycle among those chunks. */
+  if(cands.filter(c => /[\u4e00-\u9fa5]/.test(c.w)).length < 2 && /[\u4e00-\u9fa5]/.test(sent)){
+    const parts = sent.split(/[的了和与在是把被对从为而且就都也还又很更最不没要会能，。、；：？！\s]/).map(x => x.trim()).filter(Boolean);
+    let cursor = 0;
+    parts.forEach(p => {
+      if(p.length >= 2 && p.length <= 10){
+        const at = sent.indexOf(p, cursor);
+        if(at >= 0){ push(p, at); cursor = at + p.length; }
+      }
+    });
+  }
+  cands.sort((a,b) => a.at - b.at);
+  if(cands.length < 2) return null;
+  const curPos = cands.findIndex(c => c.w.toLowerCase() === first.toLowerCase());
+  const next = cands[(curPos + 1 + cands.length) % cands.length];
+  if(!next || next.w === first) return null;
+  const q2 = sent.slice(0, next.at) + '＿＿' + sent.slice(next.at + next.w.length);
+  return { q: q2, a: next.w, sentence: sent };
+}
+
+function openNoteForm(item, subjectKey){
+  const edit = !!item;
+  const n = item || { subject: subjectKey || 'chinese', title:'', source:'', date: todayStr(), tags:'', keyTerms:'', content:'' };
+  const zh = (SUBJECTS[n.subject] || {}).lang === 'zh';
+  const body =
+    '<div class="field-row">' +
+      '<div class="field"><label>' + (zh ? '科目' : 'Subject') + '</label><select id="nSubject">' +
+        SUBJECT_KEYS.map(k => '<option value="' + k + '"' + (n.subject === k ? ' selected' : '') + '>' + SUBJECTS[k].label + ' · ' + SUBJECTS[k].cn + '</option>').join('') +
+      '</select></div>' +
+      '<div class="field"><label>' + (zh ? '来源' : 'Source') + '</label><input id="nSource" placeholder="' + (zh ? '如：课堂笔记 / 讲义 / 自己整理' : 'e.g. class notes / worksheet / my summary') + '" value="' + esc(n.source) + '"></div>' +
+    '</div>' +
+    '<div class="field-row">' +
+      '<div class="field"><label>' + (zh ? '标题（必填）' : 'Title (required)') + '</label><input id="nTitle" placeholder="' + (zh ? '如：《星际动物园》学习笔记' : 'e.g. 《星际动物园》学习笔记') + '" value="' + esc(n.title) + '"></div>' +
+      '<div class="field"><label>' + (zh ? '日期' : 'Date') + '</label><input id="nDate" type="date" value="' + esc(n.date) + '"></div>' +
+    '</div>' +
+    '<div class="field"><label>' + (zh ? '标签（用空格或逗号分隔）' : 'Tags (separate with spaces or commas)') + '</label><input id="nTags" placeholder="' + (zh ? '如：阅读理解 期末复习' : 'e.g. reading comprehension revision') + '" value="' + esc(n.tags) + '"></div>' +
+    '<div class="field"><label>' + (zh ? '需要挖空的关键词（选填）' : 'Key words to blank out (optional)') + '</label>' +
+      '<input id="nKeys" placeholder="' + (zh ? '如：科幻小说 星新一 宇宙币' : 'e.g. photosynthesis gravity') + '" value="' + esc(n.keyTerms) + '">' +
+      '<div class="help">' + (zh ? '这些词会优先被挖成空；不填则自动从正文里挑重点词。' : 'These words become the blanks. Leave it empty and the page picks key phrases from your text by itself.') + '</div>' +
+    '</div>' +
+    '<div class="field"><label>' + (zh ? '笔记内容（必填）' : 'Notes / content (required)') + '</label>' +
+      '<textarea id="nContent" placeholder="' + (zh ? '把笔记、讲义或自己写的总结贴在这里…' : 'Paste your notes, worksheet or summary here…') + '">' + esc(n.content) + '</textarea>' +
+      '<div class="help">' + (zh ? '正文里的每句话都可能变成一道填空题。' : 'Each sentence here can become one fill-in-the-blank question.') + '</div>' +
+    '</div>' +
+    '<div class="field"><label>' + (zh ? '练习题目（可逐题修改）' : 'Practice questions (edit one by one)') + ' <span class="cl-badge" id="clCount">0</span></label>' +
+      '<div class="cl-tools">' +
+        '<button type="button" class="btn sm ghost" id="clAdd">＋ ' + (zh ? '添加一题' : 'Add a question') + '</button>' +
+        '<button type="button" class="btn sm ghost" id="clReGen">🔄 ' + (zh ? '按正文重新生成' : 'Rebuild from the notes') + '</button>' +
+      '</div>' +
+      '<div class="cl-list" id="clozeList"></div>' +
+      '<div class="help">' + (zh ? '题干里用“＿＿”标出空位，一句话可以放 2–3 个空；答案每个空一组、用 ; 分隔，同一空的不同写法用 / 分隔。全部留空则回到自动挖空。' : 'Mark each gap with “＿＿” — one sentence can hold 2–3 blanks. Give one answer group per blank separated by ;, and alternatives inside a group with /. Clear them all to go back to automatic blanking.') + '</div>' +
+    '</div>';
+
+  /* Editable list of practice questions: prefilled from saved ones, or from the notes themselves. */
+  const autoItems = () => itemsForNote({ subject: n.subject, title: n.title, content: n.content, keyTerms: n.keyTerms, cloze: null })
+    .map(it => ({ q: it.q, a: it.a.join(' / '), why: it.why || '' }));
+  let draft = (Array.isArray(n.cloze) && n.cloze.length)
+    ? n.cloze.map(c => ({ q: c.q, a: (c.a || []).join(' / '), why: c.why || '' }))
+    : autoItems();
+  let hadManual = Array.isArray(n.cloze) && n.cloze.length > 0;
+
+  const readRows = () => [...document.querySelectorAll('#clozeList .cl-row')].map(row => ({
+    q: row.querySelector('.cl-q').value,
+    a: row.querySelector('.cl-a').value,
+    why: row.querySelector('.cl-w').value
+  }));
+
+  const renderCloze = () => {
+    const list = document.getElementById('clozeList');
+    if(!list) return;
+    list.innerHTML = draft.length ? draft.map((r, i) =>
+      '<div class="cl-row" data-i="' + i + '">' +
+        '<div class="cl-top"><span class="cl-n">' + (i+1) + '</span>' +
+          '<textarea class="cl-q" rows="2" placeholder="' + (zh ? '题干，用 ＿＿ 表示空位' : 'question, use ＿＿ for the blank') + '">' + esc(r.q) + '</textarea>' +
+          '<div class="cl-ops">' +
+            ((String(r.q).split('＿＿').length - 1) === 1 ? '<button type="button" class="cl-swap" data-swap="' + i + '" title="' + (zh ? '把空位换到句子里另一个词上' : 'Move the blank to another word') + '">⇄</button>' : '') +
+            '<button type="button" class="cl-del" data-del="' + i + '" title="' + (zh ? '删除这题' : 'Delete') + '">✕</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="cl-bot">' +
+          '<input class="cl-a" value="' + esc(r.a) + '" placeholder="' + (zh ? '答案：每个空一组，用 ; 分隔；同一空多个写法用 / 分隔' : 'answers: one per blank separated by ;, alternatives by /') + '">' +
+          '<input class="cl-w" value="' + esc(r.why) + '" placeholder="' + (zh ? '讲解（选填）' : 'explanation (optional)') + '">' +
+        '</div>' +
+      '</div>').join('') :
+      '<div class="cl-empty">' + (zh ? '还没有题目。点“按正文重新生成”或“添加一题”。' : 'No questions yet — use “Rebuild from the notes” or “Add a question”.') + '</div>';
+    const cnt = document.getElementById('clCount');
+    if(cnt) cnt.textContent = draft.length;
+    list.querySelectorAll('.cl-del').forEach(btn => {
+      btn.onclick = () => { draft = readRows(); draft.splice(+btn.dataset.del, 1); hadManual = true; renderCloze(); };
+    });
+    list.querySelectorAll('.cl-swap').forEach(btn => {
+      btn.onclick = () => {
+        draft = readRows();
+        const i = +btn.dataset.swap;
+        const swapped = cycleBlank(draft[i].q, draft[i].a, document.getElementById('nKeys') ? document.getElementById('nKeys').value : '');
+        if(!swapped){ toast(zh ? '这句里没有别的词可以挖空了' : 'No other word in this sentence can be blanked'); return; }
+        draft[i].q = swapped.q;
+        draft[i].a = swapped.a;
+        if(!draft[i].why || /^(原句：|Original:)/.test(draft[i].why)) draft[i].why = (zh ? '原句：' : 'Original: ') + swapped.sentence;
+        hadManual = true; renderCloze();
+      };
+    });
+  };
+  /* The modal body already exists now, so build the editor and wire its buttons. */
+  function mountCloze(){
+    renderCloze();
+    const addBtn = document.getElementById('clAdd');
+    if(addBtn) addBtn.onclick = () => { draft = readRows(); draft.push({ q:'', a:'', why:'' }); hadManual = true; renderCloze(); };
+    const genBtn = document.getElementById('clReGen');
+    if(genBtn) genBtn.onclick = () => {
+      const live = {
+        subject: document.getElementById('nSubject').value,
+        title: document.getElementById('nTitle').value,
+        content: document.getElementById('nContent').value,
+        keyTerms: document.getElementById('nKeys').value,
+        cloze: null
+      };
+      const items = itemsForNote(live).map(it => ({ q: it.q, a: it.a.join(' / '), why: it.why || '' }));
+      if(!items.length){ toast(zh ? '正文太短，还生成不了题目' : 'The notes are too short to make questions yet'); return; }
+      draft = items; hadManual = true; renderCloze();
+      toast(zh ? '已按正文生成 ' + items.length + ' 道题' : 'Built ' + items.length + ' questions from the notes');
+    };
+  }
+
+  openModal({
+    title: edit ? (zh ? '编辑笔记' : 'Edit note') : (zh ? '添加笔记' : 'Add note'),
+    body,
+    okText: edit ? (zh ? '保存修改' : 'Save changes') : (zh ? '保存笔记' : 'Save note'),
+    cancelText: zh ? '取消' : 'Cancel',
+    onSubmit: () => {
+      const title = document.getElementById('nTitle').value.trim();
+      const content = document.getElementById('nContent').value.trim();
+      if(!title){ toast(zh ? '请填写标题' : 'Please add a title'); return false; }
+      if(!content){ toast(zh ? '请填写笔记内容，练习题正是从这里生成的' : 'Please add some content — it is what the questions come from'); return false; }
+      const oldSubject = n.subject;
+      const data = {
+        subject: document.getElementById('nSubject').value,
+        title,
+        source: document.getElementById('nSource').value.trim(),
+        date: document.getElementById('nDate').value || todayStr(),
+        tags: document.getElementById('nTags').value.trim(),
+        keyTerms: document.getElementById('nKeys').value.trim(),
+        content
+      };
+      /* Save the questions exactly as they were edited above. */
+      const rows = readRows().filter(r => (r.q || '').trim());
+      const cloze = [];
+      for(const r of rows){
+        const idx = rows.indexOf(r) + 1;
+        const groups = r.a.split(/[;；]+/).map(g => g.split(/[\/／|｜、]+/).map(x => x.trim()).filter(Boolean)).filter(g => g.length);
+        if(!groups.length) continue;
+        let q = r.q.trim();
+        let blanks = q.split('＿＿').length - 1;
+        if(blanks === 0){
+          const hit = groups[0].find(x => q.toLowerCase().indexOf(x.toLowerCase()) >= 0);
+          if(!hit){ toast(zh ? '第 ' + idx + ' 题的题干里没有“＿＿”，也没有出现答案词' : 'Question ' + idx + ' has no “＿＿” gap and no answer word'); return false; }
+          q = q.replace(hit, '＿＿'); blanks = 1;
+        }
+        if(groups.length !== blanks){
+          toast(zh ? '第 ' + idx + ' 题有 ' + blanks + ' 个空，但写了 ' + groups.length + ' 组答案；每个空一组，用 ; 分隔'
+            : 'Question ' + idx + ' has ' + blanks + ' blank(s) but ' + groups.length + ' answer group(s) — separate each blank with ;');
+          return false;
+        }
+        cloze.push({ q, a: blanks === 1 ? groups[0] : groups, why: r.why.trim() });
+      }
+      if(cloze.length) data.cloze = cloze;
+      if(edit){
+        Object.assign(item, data);
+        if(!data.cloze) delete item.cloze;
+        if(oldSubject !== data.subject) renderSubject(oldSubject);
+      }else{
+        STORE.notes.unshift(Object.assign({ id: uid(), createdAt: Date.now() }, data));
+      }
+      save();
+      renderSubject(data.subject);
+      renderHome();
+      toast(edit ? (zh ? '修改已保存 ✓' : 'Changes saved ✓') : (zh ? '笔记已保存 ✓' : 'Note saved ✓'));
+    }
+  });
+  mountCloze();
+}
+
+/* ==========================================================================
+   Fill-in-the-blank generation
+   ========================================================================== */
+const STOP_CN = ['我们','你们','他们','自己','这个','那个','什么','因为','所以','但是','可以','已经','就是','不是','一个','没有','这样','那样','起来','出来','时候','地方','东西','人们','一种','进行','表示','说明','体现','成为'];
+const STOP_EN = ['the','and','that','this','with','from','have','were','they','there','which','about','when','what',
+  'their','would','could','should','been','because','these','those','into','than','then','will','shall','was','are',
+  'has','had','is','be','been','being','do','did','does','done','use','used','uses','help','helps','make','makes','made',
+  'take','takes','took','get','gets','got','give','gives','gave','also','more','most','such','only','other','some',
+  'its','it','he','she','we','you','they','his','her','him','them','our','your','my','out','up','down','now','very',
+  'much','many','one','two','first','last','new','old','like','just','even','still','yet','so','too','all','any',
+  'each','every','no','not','off','on','at','by','for','of','to','in','as','or','if','but','can','may','must',
+  'after','before','during','while','where','who','whom','whose','why','how','both','between','over','under','again'];
+
+function splitSentences(text){
+  return String(text || '')
+    .replace(/\r/g,'')
+    .replace(/([。！？!?；;])\s*/g, '$1\n')
+    .replace(/([A-Za-z])\.(\s)/g, '$1.\n')
+    .split('\n')
+    .map(s => s.trim())
+    .filter(s => {
+      if(s.indexOf('【') === 0) return false;
+      const core = s.replace(/[^0-9A-Za-z\u4e00-\u9fa5]/g,'');
+      return core.length >= 8;
+    });
+}
+
+function itemsForNote(note){
+  if(!note) return [];
+  if(Array.isArray(note.cloze) && note.cloze.length){
+    return note.cloze.map(c => ({ q: c.q, a: c.a, why: c.why, src: note.title, subject: note.subject }));
+  }
+  const out = [];
+  const seen = new Set();
+  const terms = String(note.keyTerms || '').split(/[,，、\s]+/).filter(t => t.length >= 2);
+  splitSentences(note.content).forEach(s => {
+    let target = null;
+    for(const t of terms){ if(s.indexOf(t) >= 0){ target = t; break; } }
+    if(!target){
+      const cjk = s.match(/[\u4e00-\u9fa5]{2,10}/g) || [];
+      const cand = cjk.filter(w => !STOP_CN.includes(w)).sort((a,b) => b.length - a.length)[0];
+      if(cand) target = cand;
+    }
+    if(!target){
+      const words = (s.match(/[A-Za-z][A-Za-z\-]{3,}/g) || []).filter(w => !STOP_EN.includes(w.toLowerCase()));
+      target = words.sort((a,b) => b.length - a.length)[0] || null;
+    }
+    if(!target) return;
+    const q = s.replace(target, '＿＿');
+    if(q.indexOf('＿＿') < 0 || seen.has(q)) return;
+    seen.add(q);
+    out.push({ q, a:[target], why:'原句：' + s, src: note.title, subject: note.subject });
+  });
+  return out;
+}
+
+function shuffle(a){
+  const arr = a.slice();
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+  return arr;
+}
+
+function norm(s){
+  return String(s == null ? '' : s)
+    .toLowerCase()
+    .replace(/\s+/g,'')
+    .replace(/[，。！？、：；“”‘’（）《》,.!?:;'"()\[\]…—－\-]/g,'');
+}
+
+/* ==========================================================================
+   Practice
+   ========================================================================== */
+/* One question may hold 1–3 blanks. Answers come back as [ [alts for blank1], [alts for blank2], … ]. */
+function answersPerBlank(it, n){
+  const raw = Array.isArray(it.a) ? it.a : [it.a];
+  if(n <= 1){
+    const alts = raw.reduce((acc, x) => acc.concat(Array.isArray(x) ? x : [x]), []).map(x => String(x == null ? '' : x)).filter(Boolean);
+    return [alts.length ? alts : ['']];
+  }
+  const out = [];
+  for(let i = 0; i < n; i++){
+    const e = raw[i];
+    if(e == null){ out.push(['']); continue; }
+    out.push((Array.isArray(e) ? e : [e]).map(x => String(x == null ? '' : x)).filter(Boolean) || ['']);
+  }
+  return out;
+}
+
+function startPractice(notes, label, lang){
+  const zh = lang === 'zh';
+  let items = [];
+  notes.forEach(n => { items = items.concat(itemsForNote(n)); });
+  if(items.length === 0){
+    toast(zh ? '这条笔记暂时没有可以出题的句子' : (STORE.notes.length ? 'This note has no sentences long enough to practise yet' : 'Add a note first — practice comes from your own notes'));
+    return;
+  }
+  /* Every question in the note (or in the whole subject) — no 8-question cap. */
+  const pool = shuffle(items);
+  const savedSet = new Set();
+  const revealed = new Set();
+
+  const body =
+    '<div class="cq-hint">' + (zh
+      ? '这次一共 ' + pool.length + ' 题，按顺序做，不会只抽 8 题。凭记忆填写缺少的词。想不起来时，点一下那个空格就能看到答案；也可以点下面的“查看全部答案”。看过答案的空，答错也不记入错题本。'
+      : 'All ' + pool.length + ' questions this time — nothing is left out. Type the missing words from memory; stuck? Tap a blank to see its answer, or use “Show all answers”. Blanks you peeked at are not added to the mistake book.') + '</div>' +
+    '<div>' + pool.map((it, i) => {
+      const parts = String(it.q).split('＿＿');
+      const n = Math.max(1, parts.length - 1);
+      const per = answersPerBlank(it, n);
+      let inner = esc(parts[0]);
+      for(let b = 0; b < n; b++){
+        const alts = per[b] || [''];
+        const longest = alts.reduce((m, x) => Math.max(m, String(x).length), 1);
+        const isZh = /[\u4e00-\u9fa5]/.test(String(alts[0]));
+        const w = Math.min(300, Math.max(70, Math.round(longest * (isZh ? 19 : 9) + 26)));
+        inner += '<input class="cq-in" id="cz-' + i + '-' + b + '" style="width:' + w + 'px" autocomplete="off" autocapitalize="off" spellcheck="false">' +
+          esc(parts[b + 1] || '');
+      }
+      return '<div class="cq" id="cq-' + i + '">' +
+        '<div class="cq-head"><span class="idx">' + (i+1) + '</span><span>' + esc(it.src || label) +
+          (n > 1 ? ' · ' + n + (zh ? ' 个空' : ' blanks') : '') + '</span></div>' +
+        '<div class="cq-text">' + inner + '</div>' +
+        '<div class="cq-fb" id="fb-' + i + '"></div>' +
+      '</div>';
+    }).join('') + '</div>' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap;">' +
+      '<button class="btn ghost" id="czRevealAll">' + (zh ? '👀 查看全部答案' : '👀 Show all answers') + '</button>' +
+      '<button class="btn primary" id="czCheck">' + (zh ? '提交判分' : 'Check answers') + '</button>' +
+    '</div>' +
+    '<div class="result-box" id="czResult"></div>';
+
+  openModal({ title: (zh ? '填空练习 · ' : 'Fill in the blanks · ') + label, body, okText: (zh ? '关闭' : 'Close'), closeText: (zh ? '关闭' : 'Close') });
+
+  /* Tap a blank to peek at its answer (tap again to hide it). */
+  const nBlanks = i => Math.max(1, String(pool[i].q).split('＿＿').length - 1);
+  const showAnswer = (i, force) => {
+    const box = document.getElementById('cq-' + i);
+    const fb = document.getElementById('fb-' + i);
+    if(!box || !fb) return;
+    if(revealed.has(i) && !force){
+      revealed.delete(i);
+      box.classList.remove('revealed');
+      const mk = document.getElementById('pk-' + i);
+      if(mk) mk.classList.remove('on');
+      fb.innerHTML = '';
+      fb.classList.remove('show');
+      return;
+    }
+    const it = pool[i];
+    const n = nBlanks(i);
+    const per = answersPerBlank(it, n);
+    revealed.add(i);
+    box.classList.add('revealed');
+    const mk = document.getElementById('pk-' + i);
+    if(mk) mk.classList.add('on');
+    const linesOut = per.map((alts, b) =>
+      (n > 1 ? '<span class="pk-n">' + (b + 1) + '</span>' : '') + '<b>' + esc(alts[0] || '') + '</b>' +
+      (alts.length > 1 ? ' <i>/ ' + esc(alts.slice(1).join(' / ')) + '</i>' : '')).join(n > 1 ? '<br>' : '');
+    fb.innerHTML = '<span class="peek">' + (zh ? '答案：' : 'Answer: ') + linesOut + '</span>' +
+      (it.why ? '<div class="peek-why">' + esc(it.why) + '</div>' : '');
+    fb.classList.add('show');
+  };
+  pool.forEach((it, i) => {
+    const n = nBlanks(i);
+    const last = document.getElementById('cz-' + i + '-' + (n - 1));
+    const tail = last.nextSibling;
+    const mark = document.createElement('button');
+    mark.type = 'button';
+    mark.id = 'pk-' + i;
+    mark.className = 'cq-peek';
+    mark.title = zh ? '看答案' : 'Show the answer';
+    mark.textContent = '？';
+    last.parentNode.insertBefore(mark, tail);
+    mark.onclick = e => { e.preventDefault(); showAnswer(i); };
+    for(let b = 0; b < n; b++){
+      const inp = document.getElementById('cz-' + i + '-' + b);
+      if(!inp) continue;
+      inp.addEventListener('focus', () => { if(!revealed.has(i) && !inp.value.trim()) showAnswer(i); });
+    }
+  });
+
+  document.getElementById('czRevealAll').onclick = () => {
+    pool.forEach((it, i) => { if(!revealed.has(i)) showAnswer(i, true); });
+  };
+
+  document.getElementById('czCheck').onclick = () => {
+    let right = 0;
+    const wrongs = [];
+    let peeks = 0;
+    pool.forEach((it, i) => {
+      const box = document.getElementById('cq-' + i);
+      const fb = document.getElementById('fb-' + i);
+      const n = nBlanks(i);
+      const per = answersPerBlank(it, n);
+      const vals = [];
+      let okAll = true;
+      for(let b = 0; b < n; b++){
+        const inp = document.getElementById('cz-' + i + '-' + b);
+        const val = inp ? inp.value.trim() : '';
+        vals.push(val);
+        const ok = !!val && per[b].some(ans => norm(ans) === norm(val));
+        if(!ok) okAll = false;
+      }
+      if(revealed.has(i) && !okAll) peeks++;
+      box.classList.remove('right','wrong');
+      fb.classList.remove('show');
+      if(okAll){
+        right++;
+        box.classList.add('right');
+        fb.innerHTML = '<b>' + (zh ? '✓ 正确' : '✓ Correct') + '</b>';
+        fb.classList.add('show');
+      }else{
+        box.classList.add('wrong');
+        fb.innerHTML = '<b>' + (zh ? '答案：' : 'Answer: ') + '</b>' +
+          per.map((alts, b) => (n > 1 ? (b + 1) + '. ' : '') + esc(alts[0] || '')).join(n > 1 ? '\n' : '') +
+          (it.why ? '\n' + esc(it.why) : '');
+        fb.classList.add('show');
+        if(!revealed.has(i)) wrongs.push({ it, val: vals.join(' | '), answerText: per.map(alts => alts[0] || '').join(' | ') });
+      }
+    });
+
+    const rate = Math.round(right / pool.length * 100);
+    const rb = document.getElementById('czResult');
+    rb.classList.add('show');
+    rb.innerHTML = '<div class="res-capy">' + (rate === 100 ? BUNNY.cheer(94) : BUNNY.think(94)) + '</div>' +
+      '<h4>' + (zh
+        ? '答对 ' + right + ' / ' + pool.length + '（' + rate + '%）'
+        : right + ' / ' + pool.length + ' correct (' + rate + '%)') + '</h4>' +
+      '<p>' + (zh
+        ? (rate === 100 ? '全对——这条笔记已经真正变成你的了。' : rate >= 60 ? '不错。把下面的答案再读一遍，明天再做同一组。' : '慢一点：先把反馈里的完整句子读一遍，再试一次。')
+        : (rate === 100 ? 'All correct — this note is really yours now.' : rate >= 60 ? 'Good. Read the answers below once more, then try the same set again tomorrow.' : 'Take it slowly: read the full sentences in the feedback, then try again.')) + '</p>' +
+      (wrongs.length ? '<p style="margin-top:6px;">' + (zh
+        ? wrongs.length + ' 个空填错了，已记入错题本 📕'
+        : wrongs.length + ' wrong blank' + (wrongs.length > 1 ? 's have' : ' has') + ' gone into your mistake book 📕') + '</p>' : '') +
+      (peeks ? '<p style="margin-top:6px;color:var(--muted);">' + (zh
+        ? '另有 ' + peeks + ' 个空看过答案，不计入错题本。'
+        : peeks + ' blank' + (peeks > 1 ? 's were' : ' was') + ' peeked at — not added to the mistake book.') + '</p>' : '');
+
+    if(wrongs.length){
+      wrongs.forEach(w => {
+        const key = w.it.q + '|' + JSON.stringify(w.it.a);
+        if(savedSet.has(key)) return;
+        savedSet.add(key);
+        const dup = STORE.mistakes.some(m => m.question === w.it.q && m.status !== 'mastered');
+        if(dup) return;
+        STORE.mistakes.unshift({
+          id: uid(),
+          subject: w.it.subject || 'chinese',
+          source: (zh ? '填空练习 · ' : 'Cloze practice · ') + (w.it.src || label),
+          question: w.it.q,
+          myAnswer: w.val || (zh ? '（未填）' : '(left blank)'),
+          answer: w.answerText || (Array.isArray(w.it.a) ? String(w.it.a[0]) : String(w.it.a)),
+          analysis: (w.it.why || '') + (w.it.a.length > 1 ? (zh ? '\n也可接受：' : '\nOther accepted answers: ') + w.it.a.slice(1).join(' / ') : ''),
+          tags: zh ? '填空 自动收录' : 'fill in the blanks auto-saved',
+          status: 'new',
+          reviewCount: 0,
+          createdAt: todayStr(),
+          lastReview: ''
+        });
+      });
+      save();
+      renderHome();
+      if(currentView === 'mistakes') renderMistakes();
+    }
+  };
+}
+
+/* ==========================================================================
+   Mistake book
+   ========================================================================== */
+const STATUS_META = {
+  new:      { text:'To review', cls:'orange' },
+  review:   { text:'Practising', cls:'blue' },
+  mastered: { text:'Mastered',   cls:'green' }
+};
+
+function subjectMeta(key){
+  return SUBJECTS[key] || { label:'Other', icon:'📎', cls:'orange' };
+}
+
+function renderMistakes(){
+  const total = STORE.mistakes.length;
+  document.getElementById('msTotal').textContent = total;
+  document.getElementById('msNew').textContent = STORE.mistakes.filter(m => (m.status || 'new') === 'new').length;
+  document.getElementById('msDoing').textContent = STORE.mistakes.filter(m => m.status === 'review').length;
+  document.getElementById('msDone').textContent = STORE.mistakes.filter(m => m.status === 'mastered').length;
+
+  const fs = document.getElementById('misSubject').value;
+  const st = document.getElementById('misStatus').value;
+  const q = document.getElementById('misSearch').value.trim().toLowerCase();
+
+  let list = STORE.mistakes.slice();
+  if(fs !== 'all') list = list.filter(m => m.subject === fs);
+  if(st !== 'all') list = list.filter(m => (m.status || 'new') === st);
+  if(q) list = list.filter(m => [m.question, m.source, m.analysis, m.answer].join(' ').toLowerCase().indexOf(q) >= 0);
+  list.sort((a,b) => ts(b.createdAt) - ts(a.createdAt));
+
+  const box = document.getElementById('mistakeList');
+  if(list.length === 0){
+    box.innerHTML = '<div class="empty" style="grid-column:1/-1;"><div class="empty-capy">' + BUNNY.think(108) + '</div>' +
+      '<p>' + (total ? 'Nothing matches these filters.' : 'The mistake book is empty. Wrong blanks from your practice will appear here.') + '</p></div>';
+    return;
+  }
+
+  box.innerHTML = list.map(m => {
+    const sm = subjectMeta(m.subject);
+    const stm = STATUS_META[m.status] || STATUS_META.new;
+    return '<div class="mis ' + m.subject + '">' +
+      '<div class="head">' +
+        '<span class="chip ' + sm.cls + '">' + sm.icon + ' ' + sm.label + '</span>' +
+        '<h4>' + esc(m.source || 'Practice') + '</h4>' +
+        '<span class="chip ' + stm.cls + '" style="margin-left:auto;">' + stm.text + '</span>' +
+      '</div>' +
+      '<div class="qtext">' + esc(m.question) + '</div>' +
+      '<div class="ansrow">' +
+        '<span class="ans">My answer: ' + esc(m.myAnswer || 'blank') + '</span>' +
+        '<span class="ans right">Correct: ' + esc(m.answer) + '</span>' +
+        '<span class="chip">' + esc(m.createdAt || '') + '</span>' +
+        (m.reviewCount ? '<span class="chip">Reviewed ' + m.reviewCount + ' time' + (m.reviewCount > 1 ? 's' : '') + '</span>' : '') +
+      '</div>' +
+      (m.analysis ? '<div class="ana" id="ana-' + m.id + '">💡 ' + esc(m.analysis) + '</div>' : '') +
+      '<div class="acts">' +
+        (m.analysis ? '<button class="btn sm ghost" data-ana="' + m.id + '">Show explanation</button>' : '') +
+        (m.status !== 'mastered'
+          ? '<button class="btn sm green" data-master="' + m.id + '">✓ Mark as mastered</button>' +
+            '<button class="btn sm ghost" data-again="' + m.id + '">↻ Practise again</button>'
+          : '<button class="btn sm ghost" data-unmaster="' + m.id + '">Send back to review</button>') +
+        '<button class="btn sm ghost" data-mis-del="' + m.id + '" style="color:#B04A2C;">Delete</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+document.getElementById('misSubject').onchange = renderMistakes;
+document.getElementById('misStatus').onchange = renderMistakes;
+document.getElementById('misSearch').oninput = renderMistakes;
+document.getElementById('btnReviewMode').onclick = () => startReview();
+
+document.getElementById('mistakeList').addEventListener('click', e => {
+  const t = e.target;
+  const ana = t.closest('[data-ana]');
+  if(ana){
+    const el = document.getElementById('ana-' + ana.dataset.ana);
+    el.classList.toggle('show');
+    ana.textContent = el.classList.contains('show') ? 'Hide explanation' : 'Show explanation';
+    return;
+  }
+  const mr = t.closest('[data-master]');
+  if(mr){
+    const m = STORE.mistakes.find(x => x.id === mr.dataset.master);
+    if(m){ m.status = 'mastered'; m.lastReview = todayStr(); m.reviewCount = (m.reviewCount||0)+1; save(); renderMistakes(); renderHome(); toast('Marked as mastered ✓'); }
+    return;
+  }
+  const ag = t.closest('[data-again]');
+  if(ag){
+    const m = STORE.mistakes.find(x => x.id === ag.dataset.again);
+    if(m){ m.status = 'review'; m.reviewCount = (m.reviewCount||0)+1; m.lastReview = todayStr(); save(); renderMistakes(); renderHome(); toast('Moved to “Practising”'); }
+    return;
+  }
+  const um = t.closest('[data-unmaster]');
+  if(um){
+    const m = STORE.mistakes.find(x => x.id === um.dataset.unmaster);
+    if(m){ m.status = 'review'; save(); renderMistakes(); renderHome(); toast('Sent back to review'); }
+    return;
+  }
+  const dl = t.closest('[data-mis-del]');
+  if(dl){
+    if(confirm('Delete this mistake? This cannot be undone.')){
+      STORE.mistakes = STORE.mistakes.filter(x => x.id !== dl.dataset.misDel);
+      save(); renderMistakes(); renderHome(); toast('Deleted');
+    }
+  }
+});
+
+/* Review mode */
+function startReview(){
+  const queue = STORE.mistakes.filter(m => (m.status || 'new') !== 'mastered');
+  if(queue.length === 0){
+    toast(STORE.mistakes.length ? 'All mistakes are mastered — well done 🎉' : 'The mistake book is still empty');
+    return;
+  }
+  let i = 0, mastered = 0, again = 0;
+
+  function step(){
+    if(i >= queue.length){
+      openModal({
+        title: 'Review complete 🎉',
+        body: '<div style="text-align:center;padding:12px;">' +
+          '<div style="font-size:15px;color:#6E675D;">' + queue.length + ' question' + (queue.length > 1 ? 's' : '') + ' reviewed</div>' +
+          '<div style="display:flex;justify-content:center;gap:24px;margin-top:16px;">' +
+            '<div><div style="font-size:32px;font-weight:800;color:var(--ok);">' + mastered + '</div><div style="font-size:12.5px;color:#6E675D;">Mastered</div></div>' +
+            '<div><div style="font-size:32px;font-weight:800;color:var(--warn);">' + again + '</div><div style="font-size:12.5px;color:#6E675D;">Needs more practice</div></div>' +
+          '</div><p style="font-size:13px;color:#A69E93;margin-top:14px;">Short, repeated review beats one long session.</p></div>',
+        okText: 'Done'
+      });
+      renderMistakes(); renderHome();
+      return;
+    }
+    const m = queue[i];
+    const sm = subjectMeta(m.subject);
+    const body =
+      '<div style="font-size:12.5px;color:#A69E93;margin-bottom:10px;">' + (i+1) + ' of ' + queue.length + ' · ' + sm.icon + ' ' + sm.label + ' · ' + esc(m.source || '') + '</div>' +
+      '<div style="font-size:19px;line-height:1.9;background:#FBF8F3;border-radius:14px;padding:22px;white-space:pre-wrap;text-align:center;">' + esc(m.question) + '</div>' +
+      '<div style="text-align:center;margin-top:14px;"><button class="btn ghost" id="rvShow">👀 Show answer and explanation</button></div>' +
+      '<div style="margin-top:14px;padding:16px;border-radius:12px;background:var(--ok-soft);font-size:14px;display:none;white-space:pre-wrap;" id="rvAns">' +
+        '<div style="margin-bottom:6px;"><span style="color:#B04A2C;">My answer: </span>' + esc(m.myAnswer || 'blank') + '</div>' +
+        '<div style="margin-bottom:10px;"><span style="color:#1F7A4F;font-weight:600;">Correct answer: </span>' + esc(m.answer) + '</div>' +
+        (m.analysis ? '<div style="color:#6E675D;margin-bottom:12px;">💡 ' + esc(m.analysis) + '</div>' : '') +
+        '<div style="display:flex;gap:10px;">' +
+          '<button class="btn green block" id="rvMaster">✓ Mastered</button>' +
+          '<button class="btn ghost block" id="rvAgain">↻ Needs another go</button>' +
+        '</div>' +
+      '</div>';
+    openModal({
+      title:'Mistake review', body, okText:'Skip this one',
+      onSubmit: () => { i++; step(); return false; }
+    });
+    document.getElementById('rvShow').onclick = () => {
+      document.getElementById('rvAns').style.display = 'block';
+      document.getElementById('rvShow').style.display = 'none';
+    };
+    document.getElementById('rvMaster').onclick = () => {
+      m.status = 'mastered'; m.reviewCount = (m.reviewCount||0)+1; m.lastReview = todayStr();
+      mastered++; save(); i++; step();
+    };
+    document.getElementById('rvAgain').onclick = () => {
+      m.status = 'review'; m.reviewCount = (m.reviewCount||0)+1; m.lastReview = todayStr();
+      again++; save(); i++; step();
+    };
+  }
+  step();
+}
+
+/* ==========================================================================
+   Import / export
+   ========================================================================== */
+document.getElementById('btnExport').onclick = () => {
+  const blob = new Blob([JSON.stringify({
+    app:'kids-learning-hub', version:3, exportedAt:new Date().toISOString(),
+    notes: STORE.notes, mistakes: STORE.mistakes
+  }, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'learning-notes-' + todayStr() + '.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast('Backup file exported');
+};
+
+function doImport(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try{
+      const p = JSON.parse(ev.target.result);
+      if(!Array.isArray(p.notes)) throw new Error('bad format');
+      if(!confirm('Importing will replace your current notes and mistake book. Continue?')) return;
+      STORE.notes = p.notes.map(x => Object.assign({ id: uid() }, x));
+      STORE.mistakes = (Array.isArray(p.mistakes) ? p.mistakes : []).map(x => Object.assign({ id: uid(), status: x.status || 'new' }, x));
+      STORE.seeded = true;
+      STORE.seedVersion = SEED_VERSION;
+      save();
+      SUBJECT_KEYS.forEach(renderSubject);
+      renderHome(); renderMistakes();
+      toast('Imported ' + STORE.notes.length + ' notes');
+    }catch(err){
+      toast('Import failed: that is not a valid backup file');
+    }
+  };
+  reader.readAsText(file);
+}
+document.getElementById('btnImport').onclick = () => document.getElementById('fileImport').click();
+document.getElementById('fileImport').onchange = e => { doImport(e.target.files[0]); e.target.value = ''; };
+
+/* ==========================================================================
+   Init
+   ========================================================================== */
+function mountCapy(){
+  const logo = document.getElementById('brandLogo');
+  if(logo) logo.innerHTML = BUNNY.face(38, 'capy-bob');
+  const foot = document.getElementById('capyFooter');
+  if(foot) foot.innerHTML = '<div class="capy-parade">' + BUNNY.sleep(74, 'capy-bob tone-grey') + BUNNY.read(74, 'capy-sway') +
+    BUNNY.cheer(74, 'capy-bob tone-brown') + '</div><p>Practise a little every day — these bunnies are cheering you on.</p>';
+  /* a little mascot beside each section heading */
+  SUBJECT_KEYS.concat(['mistakes']).forEach(k => {
+    const t = document.querySelector('#view-' + k + ' .section-title');
+    if(t && !t.querySelector('.title-capy')) t.insertAdjacentHTML('beforeend', '<span class="title-capy">' + BUNNY.face(26) + '</span>');
+  });
+  const hero = document.getElementById('heroMascot');
+  if(hero) hero.innerHTML = '<div class="capy-bubble">' + 'Fill the gaps, little one!' + '</div>' + BUNNY.read(152, 'capy-sway') +
+    '<div class="capy-paw">🐾</div>';
+}
+mountCapy();
+SUBJECT_KEYS.forEach(renderSubject);
+renderHome();
+renderMistakes();
+
+(function initView(){
+  const v = location.hash.replace('#','');
+  if(views.includes(v)) go(v, false);
+})();
+</script>
+</body>
+</html>
