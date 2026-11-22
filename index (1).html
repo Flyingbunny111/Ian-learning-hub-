@@ -1182,7 +1182,7 @@ function openNoteForm(item, subjectKey){
         '<button type="button" class="btn sm ghost" id="clReGen">🔄 ' + (zh ? '按正文重新生成' : 'Rebuild from the notes') + '</button>' +
       '</div>' +
       '<div class="cl-list" id="clozeList"></div>' +
-      '<div class="help">' + (zh ? '题干里用“＿＿”标出空位；一道题可以写多个答案，用 / 分隔。全部留空则继续自动从正文挖空。' : 'Mark the gap with “＿＿”; separate alternative answers with /. Clear them all to let the page blank out words automatically again.') + '</div>' +
+      '<div class="help">' + (zh ? '题干里用“＿＿”标出空位，一句话可以放 2–3 个空；答案每个空一组、用 ; 分隔，同一空的不同写法用 / 分隔。全部留空则回到自动挖空。' : 'Mark each gap with “＿＿” — one sentence can hold 2–3 blanks. Give one answer group per blank separated by ;, and alternatives inside a group with /. Clear them all to go back to automatic blanking.') + '</div>' +
     '</div>';
 
   /* Editable list of practice questions: prefilled from saved ones, or from the notes themselves. */
@@ -1207,12 +1207,12 @@ function openNoteForm(item, subjectKey){
         '<div class="cl-top"><span class="cl-n">' + (i+1) + '</span>' +
           '<textarea class="cl-q" rows="2" placeholder="' + (zh ? '题干，用 ＿＿ 表示空位' : 'question, use ＿＿ for the blank') + '">' + esc(r.q) + '</textarea>' +
           '<div class="cl-ops">' +
-            '<button type="button" class="cl-swap" data-swap="' + i + '" title="' + (zh ? '把空位换到句子里另一个词上' : 'Move the blank to another word') + '">⇄</button>' +
+            ((String(r.q).split('＿＿').length - 1) === 1 ? '<button type="button" class="cl-swap" data-swap="' + i + '" title="' + (zh ? '把空位换到句子里另一个词上' : 'Move the blank to another word') + '">⇄</button>' : '') +
             '<button type="button" class="cl-del" data-del="' + i + '" title="' + (zh ? '删除这题' : 'Delete') + '">✕</button>' +
           '</div>' +
         '</div>' +
         '<div class="cl-bot">' +
-          '<input class="cl-a" value="' + esc(r.a) + '" placeholder="' + (zh ? '答案（多个写法用 / 分隔）' : 'answer (alternatives with /)') + '">' +
+          '<input class="cl-a" value="' + esc(r.a) + '" placeholder="' + (zh ? '答案：每个空一组，用 ; 分隔；同一空多个写法用 / 分隔' : 'answers: one per blank separated by ;, alternatives by /') + '">' +
           '<input class="cl-w" value="' + esc(r.why) + '" placeholder="' + (zh ? '讲解（选填）' : 'explanation (optional)') + '">' +
         '</div>' +
       '</div>').join('') :
@@ -1280,14 +1280,22 @@ function openNoteForm(item, subjectKey){
       const rows = readRows().filter(r => (r.q || '').trim());
       const cloze = [];
       for(const r of rows){
-        const a = r.a.split(/[\/／|｜,，、]+/).map(x => x.trim()).filter(Boolean);
-        if(!a.length) continue;
+        const idx = rows.indexOf(r) + 1;
+        const groups = r.a.split(/[;；]+/).map(g => g.split(/[\/／|｜、]+/).map(x => x.trim()).filter(Boolean)).filter(g => g.length);
+        if(!groups.length) continue;
         let q = r.q.trim();
-        if(q.indexOf('＿＿') < 0){
-          const hit = a.find(x => q.toLowerCase().indexOf(x.toLowerCase()) >= 0);
-          if(hit){ q = q.replace(hit, '＿＿'); } else { toast(zh ? '第 ' + (rows.indexOf(r)+1) + ' 题的题干里没有“＿＿”，也没有出现答案词' : 'Question ' + (rows.indexOf(r)+1) + ' has no “＿＿” gap and no answer word'); return false; }
+        let blanks = q.split('＿＿').length - 1;
+        if(blanks === 0){
+          const hit = groups[0].find(x => q.toLowerCase().indexOf(x.toLowerCase()) >= 0);
+          if(!hit){ toast(zh ? '第 ' + idx + ' 题的题干里没有“＿＿”，也没有出现答案词' : 'Question ' + idx + ' has no “＿＿” gap and no answer word'); return false; }
+          q = q.replace(hit, '＿＿'); blanks = 1;
         }
-        cloze.push({ q, a: a.length > 1 ? a : [a[0]], why: r.why.trim() });
+        if(groups.length !== blanks){
+          toast(zh ? '第 ' + idx + ' 题有 ' + blanks + ' 个空，但写了 ' + groups.length + ' 组答案；每个空一组，用 ; 分隔'
+            : 'Question ' + idx + ' has ' + blanks + ' blank(s) but ' + groups.length + ' answer group(s) — separate each blank with ;');
+          return false;
+        }
+        cloze.push({ q, a: blanks === 1 ? groups[0] : groups, why: r.why.trim() });
       }
       if(cloze.length) data.cloze = cloze;
       if(edit){
@@ -1300,7 +1308,7 @@ function openNoteForm(item, subjectKey){
       save();
       renderSubject(data.subject);
       renderHome();
-      toast(edit ? '修改已保存 ✓' : '笔记已保存 ✓');
+      toast(edit ? (zh ? '修改已保存 ✓' : 'Changes saved ✓') : (zh ? '笔记已保存 ✓' : 'Note saved ✓'));
     }
   });
   mountCloze();
@@ -1381,6 +1389,22 @@ function norm(s){
 /* ==========================================================================
    Practice
    ========================================================================== */
+/* One question may hold 1–3 blanks. Answers come back as [ [alts for blank1], [alts for blank2], … ]. */
+function answersPerBlank(it, n){
+  const raw = Array.isArray(it.a) ? it.a : [it.a];
+  if(n <= 1){
+    const alts = raw.reduce((acc, x) => acc.concat(Array.isArray(x) ? x : [x]), []).map(x => String(x == null ? '' : x)).filter(Boolean);
+    return [alts.length ? alts : ['']];
+  }
+  const out = [];
+  for(let i = 0; i < n; i++){
+    const e = raw[i];
+    if(e == null){ out.push(['']); continue; }
+    out.push((Array.isArray(e) ? e : [e]).map(x => String(x == null ? '' : x)).filter(Boolean) || ['']);
+  }
+  return out;
+}
+
 function startPractice(notes, label, lang){
   const zh = lang === 'zh';
   let items = [];
@@ -1389,24 +1413,32 @@ function startPractice(notes, label, lang){
     toast(zh ? '这条笔记暂时没有可以出题的句子' : (STORE.notes.length ? 'This note has no sentences long enough to practise yet' : 'Add a note first — practice comes from your own notes'));
     return;
   }
-  const pool = shuffle(items).slice(0, Math.min(8, items.length));
+  /* Every question in the note (or in the whole subject) — no 8-question cap. */
+  const pool = shuffle(items);
   const savedSet = new Set();
   const revealed = new Set();
 
   const body =
     '<div class="cq-hint">' + (zh
-      ? '凭记忆填写缺少的词。想不起来时，点一下那个空格就能看到答案；也可以点下面的“查看全部答案”。看过答案的空，答错也不记入错题本。'
-      : 'Type the missing words from memory. Stuck? Tap a blank to see its answer, or use “Show all answers”. Blanks you peeked at are not added to the mistake book.') + '</div>' +
+      ? '这次一共 ' + pool.length + ' 题，按顺序做，不会只抽 8 题。凭记忆填写缺少的词。想不起来时，点一下那个空格就能看到答案；也可以点下面的“查看全部答案”。看过答案的空，答错也不记入错题本。'
+      : 'All ' + pool.length + ' questions this time — nothing is left out. Type the missing words from memory; stuck? Tap a blank to see its answer, or use “Show all answers”. Blanks you peeked at are not added to the mistake book.') + '</div>' +
     '<div>' + pool.map((it, i) => {
       const parts = String(it.q).split('＿＿');
-      const longest = it.a.reduce((m, x) => Math.max(m, String(x).length), 1);
-      const isZh = /[\u4e00-\u9fa5]/.test(String(it.a[0]));
-      const w = Math.min(320, Math.max(88, Math.round(longest * (isZh ? 19 : 9) + 28)));
+      const n = Math.max(1, parts.length - 1);
+      const per = answersPerBlank(it, n);
+      let inner = esc(parts[0]);
+      for(let b = 0; b < n; b++){
+        const alts = per[b] || [''];
+        const longest = alts.reduce((m, x) => Math.max(m, String(x).length), 1);
+        const isZh = /[\u4e00-\u9fa5]/.test(String(alts[0]));
+        const w = Math.min(300, Math.max(70, Math.round(longest * (isZh ? 19 : 9) + 26)));
+        inner += '<input class="cq-in" id="cz-' + i + '-' + b + '" style="width:' + w + 'px" autocomplete="off" autocapitalize="off" spellcheck="false">' +
+          esc(parts[b + 1] || '');
+      }
       return '<div class="cq" id="cq-' + i + '">' +
-        '<div class="cq-head"><span class="idx">' + (i+1) + '</span><span>' + esc(it.src || label) + '</span></div>' +
-        '<div class="cq-text">' + esc(parts[0]) +
-          '<input class="cq-in" id="cz-' + i + '" style="width:' + w + 'px" autocomplete="off" autocapitalize="off" spellcheck="false">' +
-          esc(parts[1] || '') + '</div>' +
+        '<div class="cq-head"><span class="idx">' + (i+1) + '</span><span>' + esc(it.src || label) +
+          (n > 1 ? ' · ' + n + (zh ? ' 个空' : ' blanks') : '') + '</span></div>' +
+        '<div class="cq-text">' + inner + '</div>' +
         '<div class="cq-fb" id="fb-' + i + '"></div>' +
       '</div>';
     }).join('') + '</div>' +
@@ -1419,6 +1451,7 @@ function startPractice(notes, label, lang){
   openModal({ title: (zh ? '填空练习 · ' : 'Fill in the blanks · ') + label, body, okText: (zh ? '关闭' : 'Close'), closeText: (zh ? '关闭' : 'Close') });
 
   /* Tap a blank to peek at its answer (tap again to hide it). */
+  const nBlanks = i => Math.max(1, String(pool[i].q).split('＿＿').length - 1);
   const showAnswer = (i, force) => {
     const box = document.getElementById('cq-' + i);
     const fb = document.getElementById('fb-' + i);
@@ -1433,27 +1466,36 @@ function startPractice(notes, label, lang){
       return;
     }
     const it = pool[i];
+    const n = nBlanks(i);
+    const per = answersPerBlank(it, n);
     revealed.add(i);
     box.classList.add('revealed');
     const mk = document.getElementById('pk-' + i);
     if(mk) mk.classList.add('on');
-    fb.innerHTML = '<span class="peek">' + (zh ? '答案：' : 'Answer: ') + '<b>' + esc(it.a[0]) + '</b>' +
-      (it.a.length > 1 ? ' <i>/ ' + esc(it.a.slice(1).join(' / ')) + '</i>' : '') + '</span>' +
+    const linesOut = per.map((alts, b) =>
+      (n > 1 ? '<span class="pk-n">' + (b + 1) + '</span>' : '') + '<b>' + esc(alts[0] || '') + '</b>' +
+      (alts.length > 1 ? ' <i>/ ' + esc(alts.slice(1).join(' / ')) + '</i>' : '')).join(n > 1 ? '<br>' : '');
+    fb.innerHTML = '<span class="peek">' + (zh ? '答案：' : 'Answer: ') + linesOut + '</span>' +
       (it.why ? '<div class="peek-why">' + esc(it.why) + '</div>' : '');
     fb.classList.add('show');
   };
   pool.forEach((it, i) => {
-    const inp = document.getElementById('cz-' + i);
-    const tail = inp.nextSibling;
+    const n = nBlanks(i);
+    const last = document.getElementById('cz-' + i + '-' + (n - 1));
+    const tail = last.nextSibling;
     const mark = document.createElement('button');
     mark.type = 'button';
     mark.id = 'pk-' + i;
     mark.className = 'cq-peek';
     mark.title = zh ? '看答案' : 'Show the answer';
     mark.textContent = '？';
-    inp.parentNode.insertBefore(mark, tail);
+    last.parentNode.insertBefore(mark, tail);
     mark.onclick = e => { e.preventDefault(); showAnswer(i); };
-    inp.addEventListener('focus', () => { if(!revealed.has(i) && !inp.value.trim()) showAnswer(i); });
+    for(let b = 0; b < n; b++){
+      const inp = document.getElementById('cz-' + i + '-' + b);
+      if(!inp) continue;
+      inp.addEventListener('focus', () => { if(!revealed.has(i) && !inp.value.trim()) showAnswer(i); });
+    }
   });
 
   document.getElementById('czRevealAll').onclick = () => {
@@ -1465,24 +1507,34 @@ function startPractice(notes, label, lang){
     const wrongs = [];
     let peeks = 0;
     pool.forEach((it, i) => {
-      const inp = document.getElementById('cz-' + i);
       const box = document.getElementById('cq-' + i);
       const fb = document.getElementById('fb-' + i);
-      const val = inp.value.trim();
-      const ok = !!val && it.a.some(ans => norm(ans) === norm(val));
-      if(revealed.has(i) && !ok) peeks++;
+      const n = nBlanks(i);
+      const per = answersPerBlank(it, n);
+      const vals = [];
+      let okAll = true;
+      for(let b = 0; b < n; b++){
+        const inp = document.getElementById('cz-' + i + '-' + b);
+        const val = inp ? inp.value.trim() : '';
+        vals.push(val);
+        const ok = !!val && per[b].some(ans => norm(ans) === norm(val));
+        if(!ok) okAll = false;
+      }
+      if(revealed.has(i) && !okAll) peeks++;
       box.classList.remove('right','wrong');
       fb.classList.remove('show');
-      if(ok){
+      if(okAll){
         right++;
         box.classList.add('right');
         fb.innerHTML = '<b>' + (zh ? '✓ 正确' : '✓ Correct') + '</b>';
         fb.classList.add('show');
       }else{
         box.classList.add('wrong');
-        fb.innerHTML = (zh ? '答案：' : 'Answer: ') + '<b>' + esc(it.a[0]) + '</b>' + (it.why ? '\n' + esc(it.why) : '');
+        fb.innerHTML = '<b>' + (zh ? '答案：' : 'Answer: ') + '</b>' +
+          per.map((alts, b) => (n > 1 ? (b + 1) + '. ' : '') + esc(alts[0] || '')).join(n > 1 ? '\n' : '') +
+          (it.why ? '\n' + esc(it.why) : '');
         fb.classList.add('show');
-        if(!revealed.has(i)) wrongs.push({ it, val });
+        if(!revealed.has(i)) wrongs.push({ it, val: vals.join(' | '), answerText: per.map(alts => alts[0] || '').join(' | ') });
       }
     });
 
@@ -1505,7 +1557,7 @@ function startPractice(notes, label, lang){
 
     if(wrongs.length){
       wrongs.forEach(w => {
-        const key = w.it.q + '|' + w.it.a[0];
+        const key = w.it.q + '|' + JSON.stringify(w.it.a);
         if(savedSet.has(key)) return;
         savedSet.add(key);
         const dup = STORE.mistakes.some(m => m.question === w.it.q && m.status !== 'mastered');
@@ -1516,7 +1568,7 @@ function startPractice(notes, label, lang){
           source: (zh ? '填空练习 · ' : 'Cloze practice · ') + (w.it.src || label),
           question: w.it.q,
           myAnswer: w.val || (zh ? '（未填）' : '(left blank)'),
-          answer: w.it.a[0],
+          answer: w.answerText || (Array.isArray(w.it.a) ? String(w.it.a[0]) : String(w.it.a)),
           analysis: (w.it.why || '') + (w.it.a.length > 1 ? (zh ? '\n也可接受：' : '\nOther accepted answers: ') + w.it.a.slice(1).join(' / ') : ''),
           tags: zh ? '填空 自动收录' : 'fill in the blanks auto-saved',
           status: 'new',
